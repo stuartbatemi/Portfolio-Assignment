@@ -52,7 +52,6 @@ const TEXT = "#383333"; // primary text — bright
 const TEXT2 = "#868484"; // secondary text
 const TEXT3 = "#444444"; // dim text
 const BORDER = `rgba(0,255,135,0.12)`;
-const BORDERH = `rgba(14, 177, 22, 0.45)`;
 const FONT_HEAD = "'Space Grotesk', 'Segoe UI', system-ui, sans-serif";
 const FONT_BODY = "'Inter', 'Segoe UI', system-ui, sans-serif";
 
@@ -177,7 +176,7 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const ww = useWindowWidth();
   const isMobile = ww < 768;
-
+  
   useEffect(() => {
     const fn = () => setSolid(window.scrollY > 60);
     window.addEventListener("scroll", fn);
@@ -875,44 +874,45 @@ function HeroSection() {
 // MANIFESTO SECTION — large scroll-reveal typography
 // ============================================================
 function ManifestoSection() {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref      = useRef<HTMLDivElement>(null);
+  const ww       = useWindowWidth();
+  const isMobile = ww < 768;
 
-  // Each word is defined here with whether it's accent coloured or not
-  // isAccent: true = glows in neon green, false = plain white
   const words: { text: string; isAccent: boolean }[] = [
-    { text: "Building",      isAccent: false },
-    { text: "tomorrow's",    isAccent: false },
-    { text: "cloud",         isAccent: true  },
+    { text: "Building",       isAccent: false },
+    { text: "tomorrow's",     isAccent: false },
+    { text: "cloud",          isAccent: true  },
     { text: "infrastructure,",isAccent: true  },
-    { text: "one",           isAccent: false },
-    { text: "deploy",        isAccent: false },
-    { text: "at",            isAccent: false },
-    { text: "a",             isAccent: false },
-    { text: "time",          isAccent: false },
-    { text: "—",             isAccent: false },
-    { text: "bridging",      isAccent: false },
-    { text: "the",           isAccent: false },
-    { text: "gap",           isAccent: false },
-    { text: "between",       isAccent: false },
-    { text: "technical",     isAccent: true  },
-    { text: "precision",     isAccent: true  },
-    { text: "and",           isAccent: false },
-    { text: "real‑world",    isAccent: false },
-    { text: "impact.",       isAccent: false },
+    { text: "one",            isAccent: false },
+    { text: "deploy",         isAccent: false },
+    { text: "at",             isAccent: false },
+    { text: "a",              isAccent: false },
+    { text: "time",           isAccent: false },
+    { text: "—",              isAccent: false },
+    { text: "bridging",       isAccent: false },
+    { text: "the",            isAccent: false },
+    { text: "gap",            isAccent: false },
+    { text: "between",        isAccent: false },
+    { text: "technical",      isAccent: true  },
+    { text: "precision",      isAccent: true  },
+    { text: "and",            isAccent: false },
+    { text: "real‑world",     isAccent: false },
+    { text: "impact.",        isAccent: false },
   ];
 
-  // Each word gets a different starting position so they fly in
-  // from all directions and "collide" into place
+  // On mobile: small values so words don't fly off screen
+  // On desktop: big dramatic values for full cinematic effect
   const getStart = (i: number) => {
+    const range = isMobile ? 60 : 350; // ← KEY: small range on phone
     const directions = [
-      { x: -400, y: -60,  rotate: -15 },  // from far left
-      { x:  400, y:  60,  rotate:  15 },  // from far right
-      { x: -250, y: -150, rotate: -10 },  // top left diagonal
-      { x:  250, y:  150, rotate:  10 },  // bottom right diagonal
-      { x:    0, y: -300, rotate:  -6 },  // straight down from top
-      { x:    0, y:  300, rotate:   6 },  // straight up from bottom
-      { x: -350, y:  100, rotate: -12 },  // left
-      { x:  350, y: -100, rotate:  12 },  // right
+      { x: -range,      y: -range/4,  rotate: -8  },
+      { x:  range,      y:  range/4,  rotate:  8  },
+      { x: -range*0.7,  y: -range/2,  rotate: -5  },
+      { x:  range*0.7,  y:  range/2,  rotate:  5  },
+      { x:  0,          y: -range,    rotate: -3  },
+      { x:  0,          y:  range,    rotate:  3  },
+      { x: -range,      y:  range/3,  rotate: -6  },
+      { x:  range,      y: -range/3,  rotate:  6  },
     ];
     return directions[i % directions.length];
   };
@@ -921,93 +921,65 @@ function ManifestoSection() {
     <section
       ref={ref}
       style={{
-        minHeight:      "80vh",
+        minHeight:      isMobile ? "auto" : "80vh",
         display:        "flex",
         flexDirection:  "column",
         alignItems:     "center",
         justifyContent: "center",
-        padding:        "80px 32px",
+        padding:        isMobile ? "60px 20px" : "80px 32px",
         background:     "#0a0a0a",
-        borderTop:      `1px solid rgba(0,255,135,0.1)`,
-        borderBottom:   `1px solid rgba(0,255,135,0.1)`,
-        overflow:       "hidden",   // clips words flying in from edges
+        borderTop:      "1px solid rgba(0,255,135,0.1)",
+        borderBottom:   "1px solid rgba(0,255,135,0.1)",
+        overflow:       "hidden",  // ← stops horizontal scroll
         position:       "relative",
       }}
     >
-      {/* Label that slides in first */}
+      {/* Label */}
       <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        style={{
-          fontSize:      12,
-          color:         A,
-          fontWeight:    700,
-          letterSpacing: "0.14em",
-          textTransform: "uppercase" as const,
-          marginBottom:  36,
-        }}
-      >
+        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }} transition={{ duration: 0.5 }}
+        style={{ fontSize: 12, color: A, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" as const, marginBottom: 28 }}>
         My Mission
       </motion.p>
 
-      {/* Word collision container */}
-      <div
-        style={{
-          maxWidth:   900,
-          textAlign:  "center" as const,
-          lineHeight: 1.3,
-          fontFamily: FONT_HEAD,
-          fontSize:   "clamp(26px, 5vw, 58px)",
-          fontWeight: 800,
-          letterSpacing: "-0.03em",
-        }}
-      >
+      {/* Words */}
+      <div style={{
+        maxWidth:      isMobile ? "100%" : 900,
+        textAlign:     "center" as const,
+        lineHeight:    1.4,
+        fontFamily:    FONT_HEAD,
+        fontSize:      isMobile ? "clamp(20px,5.5vw,28px)" : "clamp(26px,4vw,58px)",
+        fontWeight:    800,
+        letterSpacing: "-0.02em",
+        padding:       isMobile ? "0 4px" : 0,
+      }}>
         {words.map((word, i) => {
           const start = getStart(i);
           return (
             <motion.span
               key={i}
-              initial={{
-                opacity: 0,
-                x:       start.x,
-                y:       start.y,
-                rotate:  start.rotate,
-                filter:  "blur(6px)",
-              }}
-              whileInView={{
-                opacity: 1,
-                x:       0,
-                y:       0,
-                rotate:  0,
-                filter:  "blur(0px)",
-              }}
-              // once: true = animation only plays once as you scroll past
-              viewport={{ once: true, margin: "-80px" }}
+              initial={{ opacity: 0, x: start.x, y: start.y, rotate: start.rotate, filter: "blur(4px)" }}
+              whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, filter: "blur(0px)" }}
+              viewport={{ once: true, margin: "-40px" }}
               transition={{
-                // spring makes it overshoot slightly = collision feel
                 type:      "spring",
-                stiffness: 120,
-                damping:   11,
-                delay:     i * 0.055,  // each word is 55ms after previous
-                opacity:   { duration: 0.25, delay: i * 0.055 },
-                filter:    { duration: 0.3,  delay: i * 0.055 },
+                stiffness: isMobile ? 150 : 120,
+                damping:   isMobile ? 15  : 11,
+                delay:     i * 0.055,
+                opacity:   { duration: 0.2, delay: i * 0.055 },
+                filter:    { duration: 0.25, delay: i * 0.055 },
               }}
               style={{
                 display:     "inline-block",
-                marginRight: "0.28em",
-                // Accent words get the neon gradient colour
-                ...(word.isAccent
-                  ? {
-                      background:             `linear-gradient(90deg, ${A}, ${A2})`,
-                      WebkitBackgroundClip:   "text",
-                      WebkitTextFillColor:    "transparent",
-                      backgroundClip:         "text",
-                    }
-                  : {
-                      color: "#f0f0f0",
-                    }),
+                marginRight: "0.25em",
+                ...(word.isAccent ? {
+                  background:           `linear-gradient(90deg,${A},${A2})`,
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor:  "transparent",
+                  backgroundClip:       "text",
+                } : {
+                  color: "#f0f0f0",
+                }),
               }}
             >
               {word.text}
@@ -1016,24 +988,16 @@ function ManifestoSection() {
         })}
       </div>
 
-      {/* Decorative line that draws itself after words land */}
+      {/* Accent line */}
       <motion.div
-        initial={{ scaleX: 0, opacity: 0 }}
-        whileInView={{ scaleX: 1, opacity: 1 }}
-        viewport={{ once: true }}
-        transition={{ duration: 1, delay: words.length * 0.055 + 0.3 }}
-        style={{
-          marginTop:       48,
-          height:          2,
-          width:           80,
-          background:      `linear-gradient(90deg, ${A}, ${A2})`,
-          borderRadius:    99,
-          transformOrigin: "center",
-        }}
+        initial={{ scaleX: 0, opacity: 0 }} whileInView={{ scaleX: 1, opacity: 1 }}
+        viewport={{ once: true }} transition={{ duration: 1, delay: words.length * 0.055 + 0.2 }}
+        style={{ marginTop: 40, height: 2, width: 60, background: `linear-gradient(90deg,${A},${A2})`, borderRadius: 99, transformOrigin: "center" }}
       />
     </section>
   );
 }
+
 // ============================================================
 // PROJECTS SECTION — asymmetric grid
 // ============================================================
@@ -1138,181 +1102,95 @@ function ProjectsSection() {
   );
 }
 
-function ProjectCard({
-  project,
-  featured,
-}: {
-  project: Project;
-  featured: boolean;
-}) {
+function ProjectCard({ project, featured }: { project: Project; featured: boolean }) {
   const [hov, setHov] = useState(false);
+  const ww       = useWindowWidth();
+  const isMobile = ww < 768;
   const { title, description, tech, image, link } = project;
+
+  // GitHub link — uses the main github profile + project title as slug
+  // Update each project's link in portfolio.ts to the actual repo URL
+  const githubLink = link !== "#" ? link : PROFILE.github;
 
   return (
     <motion.div
       layout
       variants={fadeUp}
       style={{
-        borderRadius: 14,
-        overflow: "hidden",
-        border: `1px solid ${hov ? BORDERH : BORDER}`,
-        background: hov ? `rgba(0,255,135,0.04)` : BG2,
-        gridColumn: featured ? "span 2" : "span 1",
-        transition: "all 0.25s",
-        boxShadow: hov ? `0 0 40px rgba(0,255,135,0.08)` : "none",
+        borderRadius:  14,
+        overflow:      "hidden",
+        border:        `1px solid ${hov ? "rgba(0,255,135,0.45)" : "rgba(0,255,135,0.12)"}`,
+        background:    hov ? "rgba(0,255,135,0.04)" : "#0a0a0a",
+        // On mobile, span full width. Featured spans 2 cols on desktop only
+        gridColumn:    featured && !isMobile ? "span 2" : "span 1",
+        transition:    "all 0.25s",
+        boxShadow:     hov ? "0 0 40px rgba(0,255,135,0.08)" : "none",
       }}
-      whileHover={{ y: -5 }}
+      whileHover={isMobile ? {} : { y: -5 }} // no hover lift on mobile
       transition={{ type: "spring", stiffness: 280, damping: 22 }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      {/* ═══════════════════════════════════════════
-          📸 PROJECT SCREENSHOT
-          
-          Add your screenshot to: public/images/project1.jpg
-          Then in portfolio.ts set:  image: "/images/project1.jpg"
-          
-          Recommended: 16:9 ratio, min 800×450px
-      ════════════════════════════════════════════ */}
-      <div
-        style={{
-          height: featured ? 280 : 200,
-          position: "relative",
-          overflow: "hidden",
-          background: BG3,
-        }}
-      >
-        {image ? (
-          <img
-            src={image}
-            alt={title}
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover" as const,
-              transition: "transform 0.4s ease",
-              transform: hov ? "scale(1.04)" : "scale(1)",
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              background: `linear-gradient(135deg, ${BG2}, ${BG3})`,
-            }}
-          >
-            <span
-              style={{ fontFamily: FONT_HEAD, fontSize: 48, color: `${A}18` }}
-            >
-              ◉
-            </span>
-          </div>
-        )}
+      {/* Project image */}
+      <div style={{ height: featured && !isMobile ? 260 : 180, position: "relative", overflow: "hidden", background: "#111" }}>
+        {image
+          ? <img src={image} alt={title}
+              style={{ width: "100%", height: "100%", objectFit: "cover" as const, transition: "transform 0.4s", transform: hov ? "scale(1.04)" : "scale(1)" }} />
+          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#0a0a0a,#111)" }}>
+              <span style={{ fontFamily: FONT_HEAD, fontSize: 40, color: "rgba(0,255,135,0.15)" }}>◉</span>
+            </div>
+        }
 
-        {/* Hover overlay with metadata */}
+        {/* Hover overlay */}
         <motion.div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(0,0,0,0.75)",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-end",
-            padding: 20,
-          }}
-          animate={{ opacity: hov ? 1 : 0 }}
-          transition={{ duration: 0.25 }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: 6,
-              flexWrap: "wrap" as const,
-              marginBottom: 8,
-            }}
-          >
+          style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", flexDirection: "column" as const, justifyContent: "flex-end", padding: 18 }}
+          animate={{ opacity: hov ? 1 : 0 }} transition={{ duration: 0.2 }}>
+          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" as const, marginBottom: 10 }}>
             {tech.map((t: string) => (
-              <span
-                key={t}
-                style={{
-                  fontSize: 10,
-                  padding: "3px 8px",
-                  borderRadius: 4,
-                  background: `${A}20`,
-                  color: A,
-                  fontWeight: 600,
-                  border: `1px solid ${A}30`,
-                }}
-              >
-                {t}
-              </span>
+              <span key={t} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 4, background: "rgba(0,255,135,0.15)", color: A, fontWeight: 600 }}>{t}</span>
             ))}
           </div>
-          {link && link !== "#" && (
-            <a
-              href={link}
-              target="_blank"
-              rel="noreferrer"
-              style={{
-                fontSize: 12,
-                color: A,
-                fontWeight: 700,
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-              }}
-            >
-              View Live Project →
-            </a>
-          )}
+          {/* GitHub link on hover */}
+          <a href={githubLink} target="_blank" rel="noreferrer"
+            style={{ fontSize: 12, color: A, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
+            View on GitHub →
+          </a>
         </motion.div>
 
         {featured && (
-          <span
-            style={{
-              position: "absolute",
-              top: 14,
-              right: 14,
-              fontSize: 10,
-              padding: "4px 10px",
-              borderRadius: 4,
-              background: A,
-              color: BG,
-              fontWeight: 800,
-              letterSpacing: "0.06em",
-            }}
-          >
+          <span style={{ position: "absolute", top: 12, right: 12, fontSize: 10, padding: "4px 10px", borderRadius: 4, background: A, color: "#050505", fontWeight: 800, letterSpacing: "0.06em" }}>
             FEATURED
           </span>
         )}
       </div>
 
       {/* Card body */}
-      <div style={{ padding: "20px 22px" }}>
-        <h3
-          style={{
-            fontFamily: FONT_HEAD,
-            fontSize: 17,
-            fontWeight: 700,
-            color: TEXT,
-            margin: "0 0 8px",
-            letterSpacing: "-0.02em",
-          }}
-        >
+      <div style={{ padding: isMobile ? "14px 16px" : "20px 22px" }}>
+        <h3 style={{ fontFamily: FONT_HEAD, fontSize: isMobile ? 15 : 17, fontWeight: 700, color: "#f0f0f0", margin: "0 0 8px", letterSpacing: "-0.02em" }}>
           {title}
         </h3>
-        <p style={{ fontSize: 13, color: TEXT2, lineHeight: 1.65, margin: 0 }}>
+        <p style={{ fontSize: isMobile ? 12 : 13, color: "#666", lineHeight: 1.65, margin: "0 0 14px" }}>
           {description}
         </p>
+
+        {/* Tech badges */}
+        <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 5, marginBottom: 14 }}>
+          {tech.map((t: string) => (
+            <span key={t} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 99, background: "rgba(0,255,135,0.08)", color: A, border: "1px solid rgba(0,255,135,0.15)", fontWeight: 600 }}>
+              {t}
+            </span>
+          ))}
+        </div>
+
+        {/* GitHub button — always visible */}
+        <a href={githubLink} target="_blank" rel="noreferrer"
+          style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: A, fontWeight: 700, padding: "7px 14px", border: "1px solid rgba(0,255,135,0.25)", borderRadius: 6 }}>
+          ⌥ View on GitHub
+        </a>
       </div>
     </motion.div>
   );
 }
-
 // ============================================================
 // SKILLS MATRIX — interactive hover grid
 // ============================================================
