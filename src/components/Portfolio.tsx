@@ -360,6 +360,9 @@ function Navbar() {
 // ============================================================
 // HERO SECTION — full screen, portrait + animated text
 // ============================================================
+// Add this line with the other useState lines at the top of HeroSection:
+
+
 function HeroSection() {
   const [photoHovered, setPhotoHovered] = useState(false);
   const [photoLoaded,  setPhotoLoaded]  = useState(false);
@@ -371,6 +374,18 @@ function HeroSection() {
   const isTV     = ww >= 1920;
 
   const initials = PROFILE.name.split(" ").map((w: string) => w[0]).join("");
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+// Add this useEffect right after it:
+useEffect(() => {
+  const v = videoRef.current;
+  if (v) {
+    v.muted = true;           // ensure muted (some browsers reset this)
+    v.play().catch(() => {}); // force play silently
+  }
+}, []);
+
 
   return (
     <section
@@ -392,19 +407,12 @@ function HeroSection() {
     >
       {/* Background video slot */}
       {/* Background video — auto-plays on all devices including iPhone */}
-     <video
-       autoPlay
-       muted        // ← MUST be muted for mobile autoplay to work
-       loop
-       playsInline  // ← MUST have this for iPhone (stops fullscreen takeover)
-       ref={(el) => {
-    // This forces play on mobile browsers that block autoplay
-       if (el) {
-        el.play().catch(() => {
-        // If autoplay fails silently, do nothing
-         });
-      } 
-  }}
+    <video
+  ref={videoRef}     // ← uses the stable ref, not inline function
+  autoPlay
+  muted
+  loop
+  playsInline
   style={{
     position:  "absolute",
     inset:     0,
@@ -413,10 +421,10 @@ function HeroSection() {
     objectFit: "cover",
     zIndex:    0,
     opacity:   0.28,
-       }}
-    >
-        <source src="/images/hero-bg.mp4" type="video/mp4" />
-       </video>
+  }}
+>
+  <source src="/images/hero-bg.mp4" type="video/mp4" />
+</video>
 
       {/* Background grid lines */}
       <div style={{
