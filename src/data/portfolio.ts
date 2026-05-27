@@ -71,7 +71,7 @@ export const PROJECTS: Project[] = [
     title:       "Portfolio REST API",
     description: "Node.js/Express backend serving portfolio data as JSON. Deployed on Render.",
     tech:        ["Node.js", "Express", "REST API", "Render"],
-    image: "/images/project 2.jpg",    // ← change to "/project2.png" when ready
+    image: "/images/project2.jpg",    // ← change to "/project2.png" when ready
     link:        "#",     // ← update with your Render URL after deploy
     featured:    false,
   },
