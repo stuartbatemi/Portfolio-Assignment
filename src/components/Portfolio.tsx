@@ -416,7 +416,7 @@ function HeroSection() {
           opacity: 0.28,
         }}
       >
-        <source src="/images/hero1-bg.mp4" type="video/mp4" />
+        <source src="/images/hero-bg.mp4" type="video/mp4" />
       </video>
 
       {/* Background grid lines */}
