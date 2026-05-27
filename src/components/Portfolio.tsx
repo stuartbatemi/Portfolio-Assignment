@@ -407,34 +407,24 @@ function HeroSection() {
     >
       {/* Background video slot */}
       {/* Background video — auto-plays on all devices including iPhone */}
-    {/* Background: video on desktop, static image on mobile */}
-{!isMobile ? (
-  <video
-    autoPlay muted loop playsInline
-    style={{
-      position: "absolute", 
-      inset: 0,
-      width: "100%", 
-      height: "100%",
-      objectFit: "cover", 
-      zIndex: 0,
-       opacity: 0.18,
-    }}>
-    <source src="/images/hero-bg.mp4" type="video/mp4" />
-  </video>
-) : (
-  // On mobile: use a still frame from your video as a photo
-  // Save one frame as hero-bg-mobile.jpg in public/images/
-  <div style={{
-    position:           "absolute",
-    inset:              0,
-    zIndex:             0,
-    backgroundImage:    "/images/hero-bg-mobile.jpg",
-    backgroundSize:     "cover",
-    backgroundPosition: "center",
-    opacity:            0.18,
-  }} />
-)}
+    <video
+  ref={videoRef}     // ← uses the stable ref, not inline function
+  autoPlay
+  muted
+  loop
+  playsInline
+  style={{
+    position:  "absolute",
+    inset:     0,
+    width:     "100%",
+    height:    "100%",
+    objectFit: "cover",
+    zIndex:    0,
+    opacity:   0.28,
+  }}
+>
+  <source src="/images/hero-bg-mobile.mp4" type="video/mp4" />
+</video>
 
       {/* Background grid lines */}
       <div style={{
