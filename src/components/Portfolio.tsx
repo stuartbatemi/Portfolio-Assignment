@@ -31,11 +31,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
-import {
-  motion,
-  AnimatePresence,
-  type Variants,
-} from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 
 import { PROFILE, SKILLS, QUALIFICATIONS, PROJECTS } from "../data/portfolio";
 import type { Skill, Qualification, Project } from "../data/portfolio";
@@ -176,7 +172,7 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const ww = useWindowWidth();
   const isMobile = ww < 768;
-  
+
   useEffect(() => {
     const fn = () => setSolid(window.scrollY > 60);
     window.addEventListener("scroll", fn);
@@ -362,93 +358,95 @@ function Navbar() {
 // ============================================================
 // Add this line with the other useState lines at the top of HeroSection:
 
-
 function HeroSection() {
   const [photoHovered, setPhotoHovered] = useState(false);
-  const [photoLoaded,  setPhotoLoaded]  = useState(false);
-  const [photoError,   setPhotoError]   = useState(false);
+  const [photoLoaded, setPhotoLoaded] = useState(false);
+  const [photoError, setPhotoError] = useState(false);
 
-  const ww       = useWindowWidth();
+  const ww = useWindowWidth();
   const isMobile = ww < 768;
   const isTablet = ww >= 768 && ww < 1024;
-  const isTV     = ww >= 1920;
+  const isTV = ww >= 1920;
 
-  const initials = PROFILE.name.split(" ").map((w: string) => w[0]).join("");
+  const initials = PROFILE.name
+    .split(" ")
+    .map((w: string) => w[0])
+    .join("");
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
-// Add this useEffect right after it:
-   useEffect(() => {
-   const v = videoRef.current;
-   if (v) {
-    v.muted = true;           // ensure muted (some browsers reset this)
-    v.play().catch(() => {}); // force play silently
-   }
-    }, []);
-
+  // Add this useEffect right after it:
+  useEffect(() => {
+    const v = videoRef.current;
+    if (v) {
+      v.muted = true; // ensure muted (some browsers reset this)
+      v.play().catch(() => {}); // force play silently
+    }
+  }, []);
 
   return (
     <section
       id="hero"
       style={{
-        minHeight:  "100vh",
-        display:    "flex",
+        minHeight: "100vh",
+        display: "flex",
         alignItems: "center",
         // More top padding on mobile (navbar takes 64px)
-        padding:    isMobile
-          ? "100px 20px 60px"
-          : isTV
-          ? "0 120px"
-          : "0 52px",
-        position:   "relative",
-        overflow:   "hidden",        // prevents horizontal scroll
-        maxWidth:   "100vw",
+        padding: isMobile ? "100px 20px 60px" : isTV ? "0 120px" : "0 52px",
+        position: "relative",
+        overflow: "hidden", // prevents horizontal scroll
+        maxWidth: "100vw",
       }}
     >
       {/* Background video slot */}
       {/* Background video — auto-plays on all devices including iPhone */}
-    <video
-  ref={videoRef}     // ← uses the stable ref, not inline function
-  autoPlay
-  muted
-  loop
-  playsInline
-  style={{
-    position:  "absolute",
-    inset:     0,
-    width:     "100%",
-    height:    "100%",
-    objectFit: "cover",
-    zIndex:    0,
-    opacity:   0.28,
-  }}
->
-  <source src="/images/hero-bg-mobile.mp4" type="video/mp4" />
-</video>
+      <video
+        ref={videoRef} // ← uses the stable ref, not inline function
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 0,
+          opacity: 0.28,
+        }}
+      >
+        <source src="/images/hero1-bg.mp4" type="video/mp4" />
+      </video>
 
       {/* Background grid lines */}
-      <div style={{
-        position: "absolute", inset: 0, zIndex: 0,
-        backgroundImage: `linear-gradient(rgba(0,255,135,0.04) 1px, transparent 1px),
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 0,
+          backgroundImage: `linear-gradient(rgba(0,255,135,0.04) 1px, transparent 1px),
                           linear-gradient(90deg, rgba(0,255,135,0.04) 1px, transparent 1px)`,
-        backgroundSize: "60px 60px",
-      }} />
+          backgroundSize: "60px 60px",
+        }}
+      />
 
       {/* Content wrapper */}
-      <div style={{
-        display:        "flex",
-        // Stack vertically on mobile, side by side on desktop
-        flexDirection:  isMobile ? "column" : "row",
-        alignItems:     isMobile ? "flex-start" : "center",
-        justifyContent: "space-between",
-        width:          "100%",
-        maxWidth:       isTV ? 1600 : 1200,
-        margin:         "0 auto",
-        gap:            isMobile ? 32 : isTablet ? 40 : 0,
-        position:       "relative",
-        zIndex:         2,
-      }}>
-
+      <div
+        style={{
+          display: "flex",
+          // Stack vertically on mobile, side by side on desktop
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "flex-start" : "center",
+          justifyContent: "space-between",
+          width: "100%",
+          maxWidth: isTV ? 1600 : 1200,
+          margin: "0 auto",
+          gap: isMobile ? 32 : isTablet ? 40 : 0,
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
         {/* ══════════════════════════════════════════════
             MOBILE PROFILE CIRCLE
             Only visible on phones — sits above the name
@@ -460,33 +458,35 @@ function HeroSection() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.5, ease: "backOut" as const }}
             style={{
-              display:      "flex",
-              alignItems:   "center",
-              gap:          14,
+              display: "flex",
+              alignItems: "center",
+              gap: 14,
               marginBottom: 8,
             }}
           >
             {/* Circle photo */}
-            <div style={{
-              width:        64,
-              height:       64,
-              borderRadius: "50%",
-              overflow:     "hidden",
-              border:       "2px solid rgba(0,255,135,0.5)",
-              flexShrink:   0,
-              position:     "relative",
-              background:   "#0a0a0a",
-              boxShadow:    "0 0 20px rgba(0,255,135,0.2)",
-            }}>
+            <div
+              style={{
+                width: 64,
+                height: 64,
+                borderRadius: "50%",
+                overflow: "hidden",
+                border: "2px solid rgba(0,255,135,0.5)",
+                flexShrink: 0,
+                position: "relative",
+                background: "#0a0a0a",
+                boxShadow: "0 0 20px rgba(0,255,135,0.2)",
+              }}
+            >
               {!photoError && (
                 <img
                   src={PROFILE.avatar ?? "/images/hero.jpg"}
                   alt={PROFILE.name}
                   style={{
-                    width:     "100%",
-                    height:    "100%",
+                    width: "100%",
+                    height: "100%",
                     objectFit: "cover" as const,
-                    opacity:   photoLoaded ? 1 : 0,
+                    opacity: photoLoaded ? 1 : 0,
                     transition: "opacity 0.4s",
                   }}
                   onLoad={() => setPhotoLoaded(true)}
@@ -495,18 +495,20 @@ function HeroSection() {
               )}
               {/* Initials fallback */}
               {(photoError || !photoLoaded) && (
-                <div style={{
-                  position:       "absolute",
-                  inset:          0,
-                  display:        "flex",
-                  alignItems:     "center",
-                  justifyContent: "center",
-                  background:     "linear-gradient(135deg,#00ff87,#00e5ff)",
-                  fontSize:       70,
-                  fontWeight:     800,
-                  color:          "#050505",
-                  fontFamily:     FONT_HEAD,
-                }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "linear-gradient(135deg,#00ff87,#00e5ff)",
+                    fontSize: 70,
+                    fontWeight: 800,
+                    color: "#050505",
+                    fontFamily: FONT_HEAD,
+                  }}
+                >
                   {initials}
                 </div>
               )}
@@ -514,10 +516,24 @@ function HeroSection() {
 
             {/* Name next to circle on mobile */}
             <div>
-              <p style={{ fontSize: 13, fontWeight: 700, color: "#033b1a", fontFamily: FONT_HEAD }}>
+              <p
+                style={{
+                  fontSize: 13,
+                  fontWeight: 700,
+                  color: "#033b1a",
+                  fontFamily: FONT_HEAD,
+                }}
+              >
                 {PROFILE.title}
               </p>
-              <p style={{ fontSize: 11, color: A, fontWeight: 600, letterSpacing: "0.05em" }}>
+              <p
+                style={{
+                  fontSize: 11,
+                  color: A,
+                  fontWeight: 600,
+                  letterSpacing: "0.05em",
+                }}
+              >
                 {PROFILE.subtitle}
               </p>
             </div>
@@ -527,32 +543,64 @@ function HeroSection() {
         {/* LEFT — text content */}
         <motion.div
           style={{
-            flex:     1,
+            flex: 1,
             maxWidth: isTV ? 700 : 600,
           }}
-          variants={stagger} initial="hidden" animate="visible"
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
         >
           {/* Available label */}
-          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+          <motion.div
+            variants={fadeUp}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              marginBottom: 10,
+            }}
+          >
             <motion.span
-              style={{ width: 8, height: 8, borderRadius: "50%", background: A, display: "block" }}
-              animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }}
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: A,
+                display: "block",
+              }}
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
             />
-            <span style={{ fontSize: isMobile ? 10 : 12, color: A, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const }}>
-              Active 
+            <span
+              style={{
+                fontSize: isMobile ? 10 : 12,
+                color: A,
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                textTransform: "uppercase" as const,
+              }}
+            >
+              Active
             </span>
           </motion.div>
 
           {/* NAME */}
-          <motion.h1 variants={fadeUp} style={{
-            fontFamily:    FONT_HEAD,
-            // clamp scales from 36px on phone to 88px on TV
-            fontSize:      isMobile ? "clamp(36px, 10vw, 52px)" : isTV ? "clamp(64px, 5vw, 100px)" : "clamp(44px, 9vw, 88px)",
-            fontWeight:    80,
-            lineHeight:    1.0,
-            letterSpacing: "-0.05em",
-            margin:        "0 0 16px",
-          }}>
+          <motion.h1
+            variants={fadeUp}
+            style={{
+              fontFamily: FONT_HEAD,
+              // clamp scales from 36px on phone to 88px on TV
+              fontSize: isMobile
+                ? "clamp(36px, 10vw, 52px)"
+                : isTV
+                  ? "clamp(64px, 5vw, 100px)"
+                  : "clamp(44px, 9vw, 88px)",
+              fontWeight: 80,
+              lineHeight: 1.0,
+              letterSpacing: "-0.05em",
+              margin: "0 0 16px",
+            }}
+          >
             <span className="g-name">{PROFILE.name.split(" ")[0]}</span>
             <br />
             <span style={{ color: "#0e0d0d" }}>
@@ -561,66 +609,102 @@ function HeroSection() {
           </motion.h1>
 
           {/* Bio */}
-          <motion.p variants={fadeUp} style={{
-            fontSize:   isMobile ? 14 : isTV ? 20 : "clamp(15px, 2vw, 18px)",
-            color:      "#888",
-            lineHeight: 1.7,
-            maxWidth:   480,
-            margin:     "0 0 32px",
-          }}>
+          <motion.p
+            variants={fadeUp}
+            style={{
+              fontSize: isMobile ? 14 : isTV ? 20 : "clamp(15px, 2vw, 18px)",
+              color: "#888",
+              lineHeight: 1.7,
+              maxWidth: 480,
+              margin: "0 0 32px",
+            }}
+          >
             {PROFILE.bio}
           </motion.p>
 
           {/* CTA buttons */}
-          <motion.div variants={fadeUp} style={{ display: "flex", gap: 12, flexWrap: "wrap" as const }}>
-            <motion.a href="#projects"
+          <motion.div
+            variants={fadeUp}
+            style={{ display: "flex", gap: 12, flexWrap: "wrap" as const }}
+          >
+            <motion.a
+              href="#projects"
               style={{
-                padding:     isMobile ? "12px 24px" : "14px 32px",
-                background:  A,
-                color:       "#050505",
+                padding: isMobile ? "12px 24px" : "14px 32px",
+                background: A,
+                color: "#050505",
                 borderRadius: 20,
-                fontWeight:  700,
-                fontSize:    isMobile ? 13 : 14,
-                fontFamily:  FONT_HEAD,
-                display:     "inline-block",
+                fontWeight: 700,
+                fontSize: isMobile ? 13 : 14,
+                fontFamily: FONT_HEAD,
+                display: "inline-block",
               }}
-              whileHover={{ scale: 1.04, boxShadow: `0 0 30px rgba(0,255,135,0.4)` }}
-              whileTap={{ scale: 0.97 }}>
+              whileHover={{
+                scale: 1.04,
+                boxShadow: `0 0 30px rgba(0,255,135,0.4)`,
+              }}
+              whileTap={{ scale: 0.97 }}
+            >
               View My Work
             </motion.a>
 
-            <motion.a href={`mailto:${PROFILE.email}`}
+            <motion.a
+              href={`mailto:${PROFILE.email}`}
               style={{
-                padding:      isMobile ? "12px 24px" : "14px 32px",
-                border:       "1px solid rgba(0,255,135,0.5)",
-                color:        "#888",
+                padding: isMobile ? "12px 24px" : "14px 32px",
+                border: "1px solid rgba(0,255,135,0.5)",
+                color: "#888",
                 borderRadius: 20,
-                fontWeight:   500,
-                fontSize:     isMobile ? 13 : 14,
-                display:      "inline-block",
+                fontWeight: 500,
+                fontSize: isMobile ? 13 : 14,
+                display: "inline-block",
               }}
               whileHover={{ borderColor: A, color: A }}
-              whileTap={{ scale: 0.97 }}>
+              whileTap={{ scale: 0.97 }}
+            >
               Get in Touch
             </motion.a>
           </motion.div>
 
           {/* Stats */}
-          <motion.div variants={fadeUp} style={{
-            display:    "flex",
-            gap:        isMobile ? 20 : 32,
-            marginTop:  isMobile ? 36 : 56,
-            paddingTop: isMobile ? 24 : 32,
-            borderTop:  "1px solid rgba(0,255,135,0.1)",
-          }}>
+          <motion.div
+            variants={fadeUp}
+            style={{
+              display: "flex",
+              gap: isMobile ? 20 : 32,
+              marginTop: isMobile ? 36 : 56,
+              paddingTop: isMobile ? 24 : 32,
+              borderTop: "1px solid rgba(0,255,135,0.1)",
+            }}
+          >
             {[
-              { n: `${PROJECTS.length}+`,       l: "Projects" },
-              { n: `${SKILLS.length}+`,          l: "Skills"   },
-              { n: `${QUALIFICATIONS.length}+`,  l: "Degrees"  },
+              { n: `${PROJECTS.length}+`, l: "Projects" },
+              { n: `${SKILLS.length}+`, l: "Skills" },
+              { n: `${QUALIFICATIONS.length}+`, l: "Degrees" },
             ].map(({ n, l }) => (
               <div key={l}>
-                <p style={{ fontFamily: FONT_HEAD, fontSize: isMobile ? 22 : 28, fontWeight: 800, color: A, lineHeight: 1, marginBottom: 4 }}>{n}</p>
-                <p style={{ fontSize: isMobile ? 9 : 11, color: "#444", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>{l}</p>
+                <p
+                  style={{
+                    fontFamily: FONT_HEAD,
+                    fontSize: isMobile ? 22 : 28,
+                    fontWeight: 800,
+                    color: A,
+                    lineHeight: 1,
+                    marginBottom: 4,
+                  }}
+                >
+                  {n}
+                </p>
+                <p
+                  style={{
+                    fontSize: isMobile ? 9 : 11,
+                    color: "#444",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase" as const,
+                  }}
+                >
+                  {l}
+                </p>
               </div>
             ))}
           </motion.div>
@@ -629,72 +713,241 @@ function HeroSection() {
         {/* RIGHT — big portrait (desktop only) */}
         {!isMobile && (
           <motion.div
-            style={{ position: "relative", width: isTablet ? 300 : isTV ? 480 : 380, flexShrink: 0 }}
-            initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}>
-
+            style={{
+              position: "relative",
+              width: isTablet ? 300 : isTV ? 480 : 380,
+              flexShrink: 0,
+            }}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
             <div
-              style={{ position: "relative", width: isTablet ? 260 : isTV ? 420 : 340, height: isTablet ? 360 : isTV ? 560 : 440 }}
+              style={{
+                position: "relative",
+                width: isTablet ? 260 : isTV ? 420 : 340,
+                height: isTablet ? 360 : isTV ? 560 : 440,
+              }}
               onMouseEnter={() => setPhotoHovered(true)}
               onMouseLeave={() => setPhotoHovered(false)}
             >
               {/* Animated glow border */}
-              <motion.div style={{ position: "absolute", inset: -2, borderRadius: 40, zIndex: 0 }}
-                animate={{ background: [
-                  "linear-gradient(135deg,rgba(0,255,135,0.6),rgba(0,229,255,0.3))",
-                  "linear-gradient(225deg,rgba(0,229,255,0.6),rgba(0,255,135,0.3))",
-                  "linear-gradient(135deg,rgba(0,255,135,0.6),rgba(0,229,255,0.3))",
-                ]}}
-                transition={{ duration: 4, repeat: Infinity }} />
+              <motion.div
+                style={{
+                  position: "absolute",
+                  inset: -2,
+                  borderRadius: 40,
+                  zIndex: 0,
+                }}
+                animate={{
+                  background: [
+                    "linear-gradient(135deg,rgba(0,255,135,0.6),rgba(0,229,255,0.3))",
+                    "linear-gradient(225deg,rgba(0,229,255,0.6),rgba(0,255,135,0.3))",
+                    "linear-gradient(135deg,rgba(0,255,135,0.6),rgba(0,229,255,0.3))",
+                  ],
+                }}
+                transition={{ duration: 4, repeat: Infinity }}
+              />
 
-              <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: 38, overflow: "hidden", zIndex: 1, background: "#0a0a0a" }}>
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: 38,
+                  overflow: "hidden",
+                  zIndex: 1,
+                  background: "#0a0a0a",
+                }}
+              >
                 {!photoError && (
                   <img
                     src={PROFILE.avatar ?? "/images/hero.jpg"}
                     alt={PROFILE.name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" as const, opacity: photoLoaded ? 1 : 0, transition: "opacity 0.5s", display: "block" }}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover" as const,
+                      opacity: photoLoaded ? 1 : 0,
+                      transition: "opacity 0.5s",
+                      display: "block",
+                    }}
                     onLoad={() => setPhotoLoaded(true)}
                     onError={() => setPhotoError(true)}
                   />
                 )}
-                <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#0a1a0e,#0d2018)", zIndex: photoLoaded && !photoError ? -1 : 0 }}>
-                  <span style={{ fontFamily: FONT_HEAD, fontSize: 72, fontWeight: 800, color: "rgba(0,255,135,0.2)" }}>{initials}</span>
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "linear-gradient(135deg,#0a1a0e,#0d2018)",
+                    zIndex: photoLoaded && !photoError ? -1 : 0,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: FONT_HEAD,
+                      fontSize: 72,
+                      fontWeight: 800,
+                      color: "rgba(0,255,135,0.2)",
+                    }}
+                  >
+                    {initials}
+                  </span>
                 </div>
 
                 {/* Hover grid overlay */}
-                <motion.div style={{ position: "absolute", inset: 0, zIndex: 2 }} animate={{ opacity: photoHovered ? 1 : 0 }} transition={{ duration: 0.3 }}>
-                  <svg width="100%" height="100%" style={{ position: "absolute", inset: 0 }}>
-                    {[1,2,3,4,5].map(i => (
-                      <motion.line key={`v${i}`} x1={`${i*100/6}%`} y1="0" x2={`${i*100/6}%`} y2="100%" stroke={A} strokeWidth="0.6" strokeOpacity="0.5"
-                        initial={{ pathLength: 0 }} animate={{ pathLength: photoHovered ? 1 : 0 }} transition={{ duration: 0.4, delay: i*0.05 }} />
+                <motion.div
+                  style={{ position: "absolute", inset: 0, zIndex: 2 }}
+                  animate={{ opacity: photoHovered ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <svg
+                    width="100%"
+                    height="100%"
+                    style={{ position: "absolute", inset: 0 }}
+                  >
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <motion.line
+                        key={`v${i}`}
+                        x1={`${(i * 100) / 6}%`}
+                        y1="0"
+                        x2={`${(i * 100) / 6}%`}
+                        y2="100%"
+                        stroke={A}
+                        strokeWidth="0.6"
+                        strokeOpacity="0.5"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: photoHovered ? 1 : 0 }}
+                        transition={{ duration: 0.4, delay: i * 0.05 }}
+                      />
                     ))}
-                    {[1,2,3,4,5,6,7].map(i => (
-                      <motion.line key={`h${i}`} x1="0" y1={`${i*100/8}%`} x2="100%" y2={`${i*100/8}%`} stroke={A} strokeWidth="0.6" strokeOpacity="0.5"
-                        initial={{ pathLength: 0 }} animate={{ pathLength: photoHovered ? 1 : 0 }} transition={{ duration: 0.4, delay: i*0.04 }} />
+                    {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                      <motion.line
+                        key={`h${i}`}
+                        x1="0"
+                        y1={`${(i * 100) / 8}%`}
+                        x2="100%"
+                        y2={`${(i * 100) / 8}%`}
+                        stroke={A}
+                        strokeWidth="0.6"
+                        strokeOpacity="0.5"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: photoHovered ? 1 : 0 }}
+                        transition={{ duration: 0.4, delay: i * 0.04 }}
+                      />
                     ))}
                   </svg>
-                  <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.35)" }} />
-                  <div style={{ position: "absolute", bottom: 20, left: 20, fontSize: 11, color: A, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const }}>
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background: "rgba(0,0,0,0.35)",
+                    }}
+                  />
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: 20,
+                      left: 20,
+                      fontSize: 11,
+                      color: A,
+                      fontWeight: 700,
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase" as const,
+                    }}
+                  >
                     {PROFILE.title}
                   </div>
                 </motion.div>
 
                 {/* Scan line */}
-                <motion.div style={{ position: "absolute", left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${A}60,transparent)`, zIndex: 4 }}
-                  animate={{ top: ["0%","100%","0%"] }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }} />
+                <motion.div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    height: 2,
+                    background: `linear-gradient(90deg,transparent,${A}60,transparent)`,
+                    zIndex: 4,
+                  }}
+                  animate={{ top: ["0%", "100%", "0%"] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+                />
               </div>
 
               {/* Floating cards */}
-              <motion.div style={{ position: "absolute", top: -16, right: -20, background: "rgba(10,10,10,0.95)", border: "1px solid rgba(0,255,135,0.2)", borderRadius: 10, padding: "10px 16px", zIndex: 10, backdropFilter: "blur(10px)" }}
-                animate={{ y: [0,-7,0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
-                <p style={{ fontSize: 10, color: A, fontWeight: 700, letterSpacing: "0.08em" }}>AVAILABLE FOR</p>
-                <p style={{ fontSize: 12, color: "#f0f0f0", fontWeight: 600 }}>Internships &amp; Projects</p>
+              <motion.div
+                style={{
+                  position: "absolute",
+                  top: -16,
+                  right: -20,
+                  background: "rgba(10,10,10,0.95)",
+                  border: "1px solid rgba(0,255,135,0.2)",
+                  borderRadius: 10,
+                  padding: "10px 16px",
+                  zIndex: 10,
+                  backdropFilter: "blur(10px)",
+                }}
+                animate={{ y: [0, -7, 0] }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 10,
+                    color: A,
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  AVAILABLE FOR
+                </p>
+                <p style={{ fontSize: 12, color: "#f0f0f0", fontWeight: 600 }}>
+                  Internships &amp; Projects
+                </p>
               </motion.div>
 
-              <motion.div style={{ position: "absolute", bottom: -16, left: -20, background: "rgba(10,10,10,0.95)", border: "1px solid rgba(0,229,255,0.2)", borderRadius: 10, padding: "10px 16px", zIndex: 10, backdropFilter: "blur(10px)" }}
-                animate={{ y: [0,7,0] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}>
-                <p style={{ fontSize: 10, color: A2, fontWeight: 700, letterSpacing: "0.08em" }}>LOCATION</p>
-                <p style={{ fontSize: 12, color: "#f0f0f0", fontWeight: 600 }}>📍 {PROFILE.location}</p>
+              <motion.div
+                style={{
+                  position: "absolute",
+                  bottom: -16,
+                  left: -20,
+                  background: "rgba(10,10,10,0.95)",
+                  border: "1px solid rgba(0,229,255,0.2)",
+                  borderRadius: 10,
+                  padding: "10px 16px",
+                  zIndex: 10,
+                  backdropFilter: "blur(10px)",
+                }}
+                animate={{ y: [0, 7, 0] }}
+                transition={{
+                  duration: 3.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.5,
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 10,
+                    color: A2,
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  LOCATION
+                </p>
+                <p style={{ fontSize: 12, color: "#f0f0f0", fontWeight: 600 }}>
+                  📍 {PROFILE.location}
+                </p>
               </motion.div>
             </div>
           </motion.div>
@@ -702,10 +955,30 @@ function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <motion.div style={{ position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column" as const, alignItems: "center", gap: 6 }}
-        animate={{ y: [0,8,0] }} transition={{ duration: 2, repeat: Infinity }}>
-        <span style={{ fontSize: 9, color: "#444", letterSpacing: "0.1em" }}>SCROLL</span>
-        <div style={{ width: 1, height: 32, background: `linear-gradient(${A},transparent)` }} />
+      <motion.div
+        style={{
+          position: "absolute",
+          bottom: 24,
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          flexDirection: "column" as const,
+          alignItems: "center",
+          gap: 6,
+        }}
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        <span style={{ fontSize: 9, color: "#444", letterSpacing: "0.1em" }}>
+          SCROLL
+        </span>
+        <div
+          style={{
+            width: 1,
+            height: 32,
+            background: `linear-gradient(${A},transparent)`,
+          }}
+        />
       </motion.div>
     </section>
   );
@@ -715,30 +988,30 @@ function HeroSection() {
 // MANIFESTO SECTION — large scroll-reveal typography
 // ============================================================
 function ManifestoSection() {
-  const ref      = useRef<HTMLDivElement>(null);
-  const ww       = useWindowWidth();
+  const ref = useRef<HTMLDivElement>(null);
+  const ww = useWindowWidth();
   const isMobile = ww < 768;
 
   const words: { text: string; isAccent: boolean }[] = [
-    { text: "Building",       isAccent: false },
-    { text: "tomorrow's",     isAccent: false },
-    { text: "cloud",          isAccent: true  },
-    { text: "infrastructure,",isAccent: true  },
-    { text: "one",            isAccent: false },
-    { text: "deploy",         isAccent: false },
-    { text: "at",             isAccent: false },
-    { text: "a",              isAccent: false },
-    { text: "time",           isAccent: false },
-    { text: "—",              isAccent: false },
-    { text: "bridging",       isAccent: false },
-    { text: "the",            isAccent: false },
-    { text: "gap",            isAccent: false },
-    { text: "between",        isAccent: false },
-    { text: "technical",      isAccent: true  },
-    { text: "precision",      isAccent: true  },
-    { text: "and",            isAccent: false },
-    { text: "real‑world",     isAccent: false },
-    { text: "impact.",        isAccent: false },
+    { text: "Building", isAccent: false },
+    { text: "tomorrow's", isAccent: false },
+    { text: "cloud", isAccent: true },
+    { text: "infrastructure,", isAccent: true },
+    { text: "one", isAccent: false },
+    { text: "deploy", isAccent: false },
+    { text: "at", isAccent: false },
+    { text: "a", isAccent: false },
+    { text: "time", isAccent: false },
+    { text: "—", isAccent: false },
+    { text: "bridging", isAccent: false },
+    { text: "the", isAccent: false },
+    { text: "gap", isAccent: false },
+    { text: "between", isAccent: false },
+    { text: "technical", isAccent: true },
+    { text: "precision", isAccent: true },
+    { text: "and", isAccent: false },
+    { text: "real‑world", isAccent: false },
+    { text: "impact.", isAccent: false },
   ];
 
   // On mobile: small values so words don't fly off screen
@@ -746,14 +1019,14 @@ function ManifestoSection() {
   const getStart = (i: number) => {
     const range = isMobile ? 60 : 350; // ← KEY: small range on phone
     const directions = [
-      { x: -range,      y: -range/4,  rotate: -8  },
-      { x:  range,      y:  range/4,  rotate:  8  },
-      { x: -range*0.7,  y: -range/2,  rotate: -5  },
-      { x:  range*0.7,  y:  range/2,  rotate:  5  },
-      { x:  0,          y: -range,    rotate: -3  },
-      { x:  0,          y:  range,    rotate:  3  },
-      { x: -range,      y:  range/3,  rotate: -6  },
-      { x:  range,      y: -range/3,  rotate:  6  },
+      { x: -range, y: -range / 4, rotate: -8 },
+      { x: range, y: range / 4, rotate: 8 },
+      { x: -range * 0.7, y: -range / 2, rotate: -5 },
+      { x: range * 0.7, y: range / 2, rotate: 5 },
+      { x: 0, y: -range, rotate: -3 },
+      { x: 0, y: range, rotate: 3 },
+      { x: -range, y: range / 3, rotate: -6 },
+      { x: range, y: -range / 3, rotate: 6 },
     ];
     return directions[i % directions.length];
   };
@@ -762,65 +1035,93 @@ function ManifestoSection() {
     <section
       ref={ref}
       style={{
-        minHeight:      isMobile ? "auto" : "80vh",
-        display:        "flex",
-        flexDirection:  "column",
-        alignItems:     "center",
+        minHeight: isMobile ? "auto" : "80vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         justifyContent: "center",
-        padding:        isMobile ? "60px 20px" : "80px 32px",
-        background:     "#0a0a0a",
-        borderTop:      "1px solid rgba(0,255,135,0.1)",
-        borderBottom:   "1px solid rgba(0,255,135,0.1)",
-        overflow:       "hidden",  // ← stops horizontal scroll
-        position:       "relative",
+        padding: isMobile ? "60px 20px" : "80px 32px",
+        background: "#0a0a0a",
+        borderTop: "1px solid rgba(0,255,135,0.1)",
+        borderBottom: "1px solid rgba(0,255,135,0.1)",
+        overflow: "hidden", // ← stops horizontal scroll
+        position: "relative",
       }}
     >
       {/* Label */}
       <motion.p
-        initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }} transition={{ duration: 0.5 }}
-        style={{ fontSize: 12, color: A, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase" as const, marginBottom: 28 }}>
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        style={{
+          fontSize: 12,
+          color: A,
+          fontWeight: 700,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase" as const,
+          marginBottom: 28,
+        }}
+      >
         My Mission
       </motion.p>
 
       {/* Words */}
-      <div style={{
-        maxWidth:      isMobile ? "100%" : 900,
-        textAlign:     "center" as const,
-        lineHeight:    1.4,
-        fontFamily:    FONT_HEAD,
-        fontSize:      isMobile ? "clamp(20px,5.5vw,28px)" : "clamp(26px,4vw,58px)",
-        fontWeight:    800,
-        letterSpacing: "-0.02em",
-        padding:       isMobile ? "0 4px" : 0,
-      }}>
+      <div
+        style={{
+          maxWidth: isMobile ? "100%" : 900,
+          textAlign: "center" as const,
+          lineHeight: 1.4,
+          fontFamily: FONT_HEAD,
+          fontSize: isMobile
+            ? "clamp(20px,5.5vw,28px)"
+            : "clamp(26px,4vw,58px)",
+          fontWeight: 800,
+          letterSpacing: "-0.02em",
+          padding: isMobile ? "0 4px" : 0,
+        }}
+      >
         {words.map((word, i) => {
           const start = getStart(i);
           return (
             <motion.span
               key={i}
-              initial={{ opacity: 0, x: start.x, y: start.y, rotate: start.rotate, filter: "blur(4px)" }}
-              whileInView={{ opacity: 1, x: 0, y: 0, rotate: 0, filter: "blur(0px)" }}
+              initial={{
+                opacity: 0,
+                x: start.x,
+                y: start.y,
+                rotate: start.rotate,
+                filter: "blur(4px)",
+              }}
+              whileInView={{
+                opacity: 1,
+                x: 0,
+                y: 0,
+                rotate: 0,
+                filter: "blur(0px)",
+              }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{
-                type:      "spring",
+                type: "spring",
                 stiffness: isMobile ? 150 : 120,
-                damping:   isMobile ? 15  : 11,
-                delay:     i * 0.055,
-                opacity:   { duration: 0.2, delay: i * 0.055 },
-                filter:    { duration: 0.25, delay: i * 0.055 },
+                damping: isMobile ? 15 : 11,
+                delay: i * 0.055,
+                opacity: { duration: 0.2, delay: i * 0.055 },
+                filter: { duration: 0.25, delay: i * 0.055 },
               }}
               style={{
-                display:     "inline-block",
+                display: "inline-block",
                 marginRight: "0.25em",
-                ...(word.isAccent ? {
-                  background:           `linear-gradient(90deg,${A},${A2})`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor:  "transparent",
-                  backgroundClip:       "text",
-                } : {
-                  color: "#f0f0f0",
-                }),
+                ...(word.isAccent
+                  ? {
+                      background: `linear-gradient(90deg,${A},${A2})`,
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      backgroundClip: "text",
+                    }
+                  : {
+                      color: "#f0f0f0",
+                    }),
               }}
             >
               {word.text}
@@ -831,9 +1132,18 @@ function ManifestoSection() {
 
       {/* Accent line */}
       <motion.div
-        initial={{ scaleX: 0, opacity: 0 }} whileInView={{ scaleX: 1, opacity: 1 }}
-        viewport={{ once: true }} transition={{ duration: 1, delay: words.length * 0.055 + 0.2 }}
-        style={{ marginTop: 40, height: 2, width: 60, background: `linear-gradient(90deg,${A},${A2})`, borderRadius: 99, transformOrigin: "center" }}
+        initial={{ scaleX: 0, opacity: 0 }}
+        whileInView={{ scaleX: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1, delay: words.length * 0.055 + 0.2 }}
+        style={{
+          marginTop: 40,
+          height: 2,
+          width: 60,
+          background: `linear-gradient(90deg,${A},${A2})`,
+          borderRadius: 99,
+          transformOrigin: "center",
+        }}
       />
     </section>
   );
@@ -943,9 +1253,15 @@ function ProjectsSection() {
   );
 }
 
-function ProjectCard({ project, featured }: { project: Project; featured: boolean }) {
+function ProjectCard({
+  project,
+  featured,
+}: {
+  project: Project;
+  featured: boolean;
+}) {
   const [hov, setHov] = useState(false);
-  const ww       = useWindowWidth();
+  const ww = useWindowWidth();
   const isMobile = ww < 768;
   const { title, description, tech, image, link } = project;
 
@@ -958,14 +1274,14 @@ function ProjectCard({ project, featured }: { project: Project; featured: boolea
       layout
       variants={fadeUp}
       style={{
-        borderRadius:  14,
-        overflow:      "hidden",
-        border:        `1px solid ${hov ? "rgba(0,255,135,0.45)" : "rgba(0,255,135,0.12)"}`,
-        background:    hov ? "rgba(0,255,135,0.04)" : "#0a0a0a",
+        borderRadius: 14,
+        overflow: "hidden",
+        border: `1px solid ${hov ? "rgba(0,255,135,0.45)" : "rgba(0,255,135,0.12)"}`,
+        background: hov ? "rgba(0,255,135,0.04)" : "#0a0a0a",
         // On mobile, span full width. Featured spans 2 cols on desktop only
-        gridColumn:    featured && !isMobile ? "span 2" : "span 1",
-        transition:    "all 0.25s",
-        boxShadow:     hov ? "0 0 40px rgba(0,255,135,0.08)" : "none",
+        gridColumn: featured && !isMobile ? "span 2" : "span 1",
+        transition: "all 0.25s",
+        boxShadow: hov ? "0 0 40px rgba(0,255,135,0.08)" : "none",
       }}
       whileHover={isMobile ? {} : { y: -5 }} // no hover lift on mobile
       transition={{ type: "spring", stiffness: 280, damping: 22 }}
@@ -973,33 +1289,120 @@ function ProjectCard({ project, featured }: { project: Project; featured: boolea
       onMouseLeave={() => setHov(false)}
     >
       {/* Project image */}
-      <div style={{ height: featured && !isMobile ? 260 : 180, position: "relative", overflow: "hidden", background: "#111" }}>
-        {image
-          ? <img src={image} alt={title}
-              style={{ width: "100%", height: "100%", objectFit: "cover" as const, transition: "transform 0.4s", transform: hov ? "scale(1.04)" : "scale(1)" }} />
-          : <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#0a0a0a,#111)" }}>
-              <span style={{ fontFamily: FONT_HEAD, fontSize: 40, color: "rgba(0,255,135,0.15)" }}>◉</span>
-            </div>
-        }
+      <div
+        style={{
+          height: featured && !isMobile ? 260 : 180,
+          position: "relative",
+          overflow: "hidden",
+          background: "#111",
+        }}
+      >
+        {image ? (
+          <img
+            src={image}
+            alt={title}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover" as const,
+              transition: "transform 0.4s",
+              transform: hov ? "scale(1.04)" : "scale(1)",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "linear-gradient(135deg,#0a0a0a,#111)",
+            }}
+          >
+            <span
+              style={{
+                fontFamily: FONT_HEAD,
+                fontSize: 40,
+                color: "rgba(0,255,135,0.15)",
+              }}
+            >
+              ◉
+            </span>
+          </div>
+        )}
 
         {/* Hover overlay */}
         <motion.div
-          style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", flexDirection: "column" as const, justifyContent: "flex-end", padding: 18 }}
-          animate={{ opacity: hov ? 1 : 0 }} transition={{ duration: 0.2 }}>
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" as const, marginBottom: 10 }}>
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(0,0,0,0.8)",
+            display: "flex",
+            flexDirection: "column" as const,
+            justifyContent: "flex-end",
+            padding: 18,
+          }}
+          animate={{ opacity: hov ? 1 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: 6,
+              flexWrap: "wrap" as const,
+              marginBottom: 10,
+            }}
+          >
             {tech.map((t: string) => (
-              <span key={t} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 4, background: "rgba(0,255,135,0.15)", color: A, fontWeight: 600 }}>{t}</span>
+              <span
+                key={t}
+                style={{
+                  fontSize: 10,
+                  padding: "3px 8px",
+                  borderRadius: 4,
+                  background: "rgba(0,255,135,0.15)",
+                  color: A,
+                  fontWeight: 600,
+                }}
+              >
+                {t}
+              </span>
             ))}
           </div>
           {/* GitHub link on hover */}
-          <a href={githubLink} target="_blank" rel="noreferrer"
-            style={{ fontSize: 12, color: A, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
+          <a
+            href={githubLink}
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              fontSize: 12,
+              color: A,
+              fontWeight: 700,
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+          >
             View on GitHub →
           </a>
         </motion.div>
 
         {featured && (
-          <span style={{ position: "absolute", top: 12, right: 12, fontSize: 10, padding: "4px 10px", borderRadius: 4, background: A, color: "#050505", fontWeight: 800, letterSpacing: "0.06em" }}>
+          <span
+            style={{
+              position: "absolute",
+              top: 12,
+              right: 12,
+              fontSize: 10,
+              padding: "4px 10px",
+              borderRadius: 4,
+              background: A,
+              color: "#050505",
+              fontWeight: 800,
+              letterSpacing: "0.06em",
+            }}
+          >
             FEATURED
           </span>
         )}
@@ -1007,25 +1410,73 @@ function ProjectCard({ project, featured }: { project: Project; featured: boolea
 
       {/* Card body */}
       <div style={{ padding: isMobile ? "14px 16px" : "20px 22px" }}>
-        <h3 style={{ fontFamily: FONT_HEAD, fontSize: isMobile ? 15 : 17, fontWeight: 700, color: "#f0f0f0", margin: "0 0 8px", letterSpacing: "-0.02em" }}>
+        <h3
+          style={{
+            fontFamily: FONT_HEAD,
+            fontSize: isMobile ? 15 : 17,
+            fontWeight: 700,
+            color: "#f0f0f0",
+            margin: "0 0 8px",
+            letterSpacing: "-0.02em",
+          }}
+        >
           {title}
         </h3>
-        <p style={{ fontSize: isMobile ? 12 : 13, color: "#666", lineHeight: 1.65, margin: "0 0 14px" }}>
+        <p
+          style={{
+            fontSize: isMobile ? 12 : 13,
+            color: "#666",
+            lineHeight: 1.65,
+            margin: "0 0 14px",
+          }}
+        >
           {description}
         </p>
 
         {/* Tech badges */}
-        <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 5, marginBottom: 14 }}>
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap" as const,
+            gap: 5,
+            marginBottom: 14,
+          }}
+        >
           {tech.map((t: string) => (
-            <span key={t} style={{ fontSize: 10, padding: "3px 8px", borderRadius: 99, background: "rgba(0,255,135,0.08)", color: A, border: "1px solid rgba(0,255,135,0.15)", fontWeight: 600 }}>
+            <span
+              key={t}
+              style={{
+                fontSize: 10,
+                padding: "3px 8px",
+                borderRadius: 99,
+                background: "rgba(0,255,135,0.08)",
+                color: A,
+                border: "1px solid rgba(0,255,135,0.15)",
+                fontWeight: 600,
+              }}
+            >
               {t}
             </span>
           ))}
         </div>
 
         {/* GitHub button — always visible */}
-        <a href={githubLink} target="_blank" rel="noreferrer"
-          style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: A, fontWeight: 700, padding: "7px 14px", border: "1px solid rgba(0,255,135,0.25)", borderRadius: 6 }}>
+        <a
+          href={githubLink}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            fontSize: 12,
+            color: A,
+            fontWeight: 700,
+            padding: "7px 14px",
+            border: "1px solid rgba(0,255,135,0.25)",
+            borderRadius: 6,
+          }}
+        >
           ⌥ View on GitHub
         </a>
       </div>
@@ -1279,8 +1730,13 @@ function SkillsMatrix() {
 // PARTICLEFIELD SECTION
 // ============================================================
 
-
-function ParticleField({ color = "#00ff87", opacity = 0.6 }: { color?: string; opacity?: number }) {
+function ParticleField({
+  color = "#00ff87",
+  opacity = 0.6,
+}: {
+  color?: string;
+  opacity?: number;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -1290,17 +1746,17 @@ function ParticleField({ color = "#00ff87", opacity = 0.6 }: { color?: string; o
     if (!ctx) return;
 
     const resize = () => {
-      canvas.width  = canvas.offsetWidth;
+      canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
     };
     resize();
     window.addEventListener("resize", resize);
 
     const particles = Array.from({ length: 80 }, () => ({
-      x:    Math.random() * canvas.width,
-      y:    Math.random() * canvas.height,
-      vx:   (Math.random() - 0.5) * 0.4,
-      vy:   (Math.random() - 0.5) * 0.4,
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
       size: Math.random() * 2 + 1,
     }));
 
@@ -1326,8 +1782,8 @@ function ParticleField({ color = "#00ff87", opacity = 0.6 }: { color?: string; o
 
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
-          const dx   = particles[i].x - particles[j].x;
-          const dy   = particles[i].y - particles[j].y;
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 120) {
             ctx!.beginPath();
@@ -1335,7 +1791,7 @@ function ParticleField({ color = "#00ff87", opacity = 0.6 }: { color?: string; o
             ctx!.lineTo(particles[j].x, particles[j].y);
             ctx!.strokeStyle = color;
             ctx!.globalAlpha = (1 - dist / 120) * opacity * 0.25;
-            ctx!.lineWidth   = 0.8;
+            ctx!.lineWidth = 0.8;
             ctx!.stroke();
           }
         }
@@ -1357,12 +1813,12 @@ function ParticleField({ color = "#00ff87", opacity = 0.6 }: { color?: string; o
     <canvas
       ref={canvasRef}
       style={{
-        position:      "absolute",
-        inset:         0,
-        width:         "100%",
-        height:        "100%",
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
         pointerEvents: "none",
-        zIndex:        0,
+        zIndex: 0,
       }}
     />
   );
@@ -1374,96 +1830,214 @@ function ParticleField({ color = "#00ff87", opacity = 0.6 }: { color?: string; o
 function TimelineSection() {
   const milestones = [
     ...QUALIFICATIONS.map((q: Qualification) => ({
-      year:  q.year.split("–")[0].trim(),
+      year: q.year.split("–")[0].trim(),
       title: q.degree,
-      sub:   q.school,
-      desc:  q.description,
-      type:  "Education",
+      sub: q.school,
+      desc: q.description,
+      type: "Education",
       color: A,
     })),
     ...PROJECTS.map((p: Project) => ({
-      year:  "2024",
+      year: "2024",
       title: p.title,
-      sub:   p.tech.join(" · "),
-      desc:  p.description,
-      type:  "Project",
+      sub: p.tech.join(" · "),
+      desc: p.description,
+      type: "Project",
       color: A2,
     })),
   ];
 
   return (
-    <section id="timeline" style={{ padding: "120px 52px", position: "relative", overflow: "hidden" }}>
-
+    <section
+      id="timeline"
+      style={{
+        padding: "120px 52px",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
       {/* Moving particle background */}
       <ParticleField color="#00ff87" opacity={0.5} />
-      
-       {/* Your background video */}
-<video
-  autoPlay muted loop playsInline
-  style={{
-    position:   "absolute",
-    inset:      0,
-    width:      "100%",
-    height:     "100%",
-    objectFit:  "cover",
-    zIndex:     0,
-    opacity:    0.75,   // ← adjust for how visible you want it
-  }}>
-  <source src="/images/timeline-bg.mp4" type="video/mp4" />
-</video>
+
+      {/* Your background video */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 0,
+          opacity: 0.75, // ← adjust for how visible you want it
+        }}
+      >
+        <source src="/images/timeline-bg.mp4" type="video/mp4" />
+      </video>
 
       {/* Dark overlay so text stays readable */}
-      <div style={{ position: "absolute", inset: 0, background: "rgba(5,5,5,0.8)", zIndex: 1, pointerEvents: "none" }} />
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "rgba(5,5,5,0.8)",
+          zIndex: 1,
+          pointerEvents: "none",
+        }}
+      />
 
       {/* Content sits on top */}
-      <div style={{ maxWidth: 800, margin: "0 auto", position: "relative", zIndex: 2 }}>
-        <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-
+      <div
+        style={{
+          maxWidth: 800,
+          margin: "0 auto",
+          position: "relative",
+          zIndex: 2,
+        }}
+      >
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           <motion.div variants={fadeUp} style={{ marginBottom: 64 }}>
-            <p style={{ fontSize: 11, color: A, fontWeight: 700, letterSpacing: "0.12em", marginBottom: 8, textTransform: "uppercase" as const }}>
+            <p
+              style={{
+                fontSize: 11,
+                color: A,
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                marginBottom: 8,
+                textTransform: "uppercase" as const,
+              }}
+            >
               The journey
             </p>
-            <h2 style={{ fontFamily: FONT_HEAD, fontSize: "clamp(32px,5vw,52px)", fontWeight: 800, letterSpacing: "-0.04em", color: "#f0f0f0" }}>
+            <h2
+              style={{
+                fontFamily: FONT_HEAD,
+                fontSize: "clamp(32px,5vw,52px)",
+                fontWeight: 800,
+                letterSpacing: "-0.04em",
+                color: "#f0f0f0",
+              }}
+            >
               Timeline
             </h2>
           </motion.div>
 
           <div style={{ position: "relative" }}>
-            <div style={{ position: "absolute", left: 20, top: 0, bottom: 0, width: 1, background: "rgba(0,255,135,0.2)" }} />
+            <div
+              style={{
+                position: "absolute",
+                left: 20,
+                top: 0,
+                bottom: 0,
+                width: 1,
+                background: "rgba(0,255,135,0.2)",
+              }}
+            />
 
             {milestones.map((m, i) => (
-              <motion.div key={i} variants={fadeUp}
-                style={{ display: "flex", gap: 32, marginBottom: 48, paddingLeft: 56, position: "relative" }}>
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                style={{
+                  display: "flex",
+                  gap: 32,
+                  marginBottom: 48,
+                  paddingLeft: 56,
+                  position: "relative",
+                }}
+              >
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 14,
+                    top: 6,
+                    width: 13,
+                    height: 13,
+                    borderRadius: "50%",
+                    background: m.color,
+                    boxShadow: `0 0 16px ${m.color}, 0 0 32px ${m.color}40`,
+                    border: `2px solid #050505`,
+                  }}
+                />
 
-                <div style={{
-                  position: "absolute", left: 14, top: 6,
-                  width: 13, height: 13, borderRadius: "50%",
-                  background: m.color,
-                  boxShadow: `0 0 16px ${m.color}, 0 0 32px ${m.color}40`,
-                  border: `2px solid #050505`,
-                }} />
-
-                <div style={{
-                  flex: 1,
-                  background: "rgba(10,10,10,0.85)",
-                  border: `1px solid ${m.color}25`,
-                  borderRadius: 12,
-                  padding: "20px 24px",
-                  backdropFilter: "blur(8px)",
-                }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
-                    <h3 style={{ fontFamily: FONT_HEAD, fontSize: 16, fontWeight: 700, color: "#f0f0f0", letterSpacing: "-0.02em" }}>
+                <div
+                  style={{
+                    flex: 1,
+                    background: "rgba(10,10,10,0.85)",
+                    border: `1px solid ${m.color}25`,
+                    borderRadius: 12,
+                    padding: "20px 24px",
+                    backdropFilter: "blur(8px)",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      marginBottom: 6,
+                    }}
+                  >
+                    <h3
+                      style={{
+                        fontFamily: FONT_HEAD,
+                        fontSize: 16,
+                        fontWeight: 700,
+                        color: "#f0f0f0",
+                        letterSpacing: "-0.02em",
+                      }}
+                    >
                       {m.title}
                     </h3>
-                    <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0, marginLeft: 12 }}>
-                      <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 4, background: `${m.color}15`, color: m.color, fontWeight: 700 }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: 8,
+                        alignItems: "center",
+                        flexShrink: 0,
+                        marginLeft: 12,
+                      }}
+                    >
+                      <span
+                        style={{
+                          fontSize: 10,
+                          padding: "3px 8px",
+                          borderRadius: 4,
+                          background: `${m.color}15`,
+                          color: m.color,
+                          fontWeight: 700,
+                        }}
+                      >
                         {m.type}
                       </span>
-                      <span style={{ fontSize: 12, color: "#444", fontWeight: 500 }}>{m.year}</span>
+                      <span
+                        style={{ fontSize: 12, color: "#444", fontWeight: 500 }}
+                      >
+                        {m.year}
+                      </span>
                     </div>
                   </div>
-                  <p style={{ fontSize: 12, color: m.color, fontWeight: 500, marginBottom: 8 }}>{m.sub}</p>
-                  <p style={{ fontSize: 13, color: "#888", lineHeight: 1.6 }}>{m.desc}</p>
+                  <p
+                    style={{
+                      fontSize: 12,
+                      color: m.color,
+                      fontWeight: 500,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {m.sub}
+                  </p>
+                  <p style={{ fontSize: 13, color: "#888", lineHeight: 1.6 }}>
+                    {m.desc}
+                  </p>
                 </div>
               </motion.div>
             ))}
