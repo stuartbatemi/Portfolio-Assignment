@@ -391,13 +391,32 @@ function HeroSection() {
       }}
     >
       {/* Background video slot */}
-      <video autoPlay muted loop playsInline style={{
-        position: "absolute", inset: 0,
-        width: "100%", height: "100%",
-        objectFit: "cover", zIndex: 0, opacity: 0.18,
-      }}>
+      {/* Background video — auto-plays on all devices including iPhone */}
+     <video
+       autoPlay
+       muted        // ← MUST be muted for mobile autoplay to work
+       loop
+       playsInline  // ← MUST have this for iPhone (stops fullscreen takeover)
+       ref={(el) => {
+    // This forces play on mobile browsers that block autoplay
+       if (el) {
+        el.play().catch(() => {
+        // If autoplay fails silently, do nothing
+         });
+      } 
+  }}
+  style={{
+    position:  "absolute",
+    inset:     0,
+    width:     "100%",
+    height:    "100%",
+    objectFit: "cover",
+    zIndex:    0,
+    opacity:   0.28,
+       }}
+    >
         <source src="/images/hero-bg.mp4" type="video/mp4" />
-      </video>
+       </video>
 
       {/* Background grid lines */}
       <div style={{
@@ -506,13 +525,13 @@ function HeroSection() {
           variants={stagger} initial="hidden" animate="visible"
         >
           {/* Available label */}
-          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
             <motion.span
               style={{ width: 8, height: 8, borderRadius: "50%", background: A, display: "block" }}
               animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }}
             />
             <span style={{ fontSize: isMobile ? 10 : 12, color: A, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const }}>
-              Available for Opportunities
+              Active 
             </span>
           </motion.div>
 
@@ -521,14 +540,14 @@ function HeroSection() {
             fontFamily:    FONT_HEAD,
             // clamp scales from 36px on phone to 88px on TV
             fontSize:      isMobile ? "clamp(36px, 10vw, 52px)" : isTV ? "clamp(64px, 5vw, 100px)" : "clamp(44px, 9vw, 88px)",
-            fontWeight:    800,
+            fontWeight:    80,
             lineHeight:    1.0,
             letterSpacing: "-0.05em",
             margin:        "0 0 16px",
           }}>
             <span className="g-name">{PROFILE.name.split(" ")[0]}</span>
             <br />
-            <span style={{ color: "#f0f0f0" }}>
+            <span style={{ color: "#0e0d0d" }}>
               {PROFILE.name.split(" ").slice(1).join(" ")}
             </span>
           </motion.h1>
@@ -551,7 +570,7 @@ function HeroSection() {
                 padding:     isMobile ? "12px 24px" : "14px 32px",
                 background:  A,
                 color:       "#050505",
-                borderRadius: 8,
+                borderRadius: 20,
                 fontWeight:  700,
                 fontSize:    isMobile ? 13 : 14,
                 fontFamily:  FONT_HEAD,
@@ -566,8 +585,8 @@ function HeroSection() {
               style={{
                 padding:      isMobile ? "12px 24px" : "14px 32px",
                 border:       "1px solid rgba(0,255,135,0.5)",
-                color:        "#f0f0f0",
-                borderRadius: 8,
+                color:        "#888",
+                borderRadius: 20,
                 fontWeight:   500,
                 fontSize:     isMobile ? 13 : 14,
                 display:      "inline-block",
