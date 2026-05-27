@@ -63,7 +63,7 @@ export const PROJECTS: Project[] = [
     title:       "Credit Card Fraud Detection",
     description: "The project addresses the challenge of identifying fraudulent credit card transactions in a highly unbalanced dataset (0.17% fraud). The built machine learning pipeline prioritizes catching thieves over simply achieving high accuracy.",
     tech:        ["python", "Jupyter Notebook"],
-    image:  "/images/project x.jpg",   // ← change to "/project1.png" when ready
+    image:  "/images/projectx.jpg",   // ← change to "/project1.png" when ready
     link:        "#",     // ← update with your Vercel URL after deploy
     featured:    true,
   },
@@ -73,7 +73,7 @@ export const PROJECTS: Project[] = [
     tech:        ["Node.js", "Express", "REST API", "Render"],
     image: "/images/project2.jpg",    // ← change to "/project2.png" when ready
     link:        "#",     // ← update with your Render URL after deploy
-    featured:    false,
+    featured:    true,
   },
 ];
 
