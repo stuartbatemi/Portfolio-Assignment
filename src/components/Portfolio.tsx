@@ -362,478 +362,312 @@ function Navbar() {
 // ============================================================
 function HeroSection() {
   const [photoHovered, setPhotoHovered] = useState(false);
-  const ww = useWindowWidth();
-  const isMobile = ww < 768;
-  const initials = PROFILE.name
-    .split(" ")
-    .map((w: string) => w[0])
-    .join("");
+  const [photoLoaded,  setPhotoLoaded]  = useState(false);
+  const [photoError,   setPhotoError]   = useState(false);
 
-    
+  const ww       = useWindowWidth();
+  const isMobile = ww < 768;
+  const isTablet = ww >= 768 && ww < 1024;
+  const isTV     = ww >= 1920;
+
+  const initials = PROFILE.name.split(" ").map((w: string) => w[0]).join("");
+
   return (
     <section
       id="hero"
       style={{
-        minHeight: "100vh",
-        display: "flex",
+        minHeight:  "100vh",
+        display:    "flex",
         alignItems: "center",
-        padding: isMobile ? "100px 24px 60px" : "0 52px",
-        position: "relative",
+        // More top padding on mobile (navbar takes 64px)
+        padding:    isMobile
+          ? "100px 20px 60px"
+          : isTV
+          ? "0 120px"
+          : "0 52px",
+        position:   "relative",
+        overflow:   "hidden",        // prevents horizontal scroll
+        maxWidth:   "100vw",
       }}
     >
-    {/* Background video */}
-<video
-  autoPlay muted loop playsInline
-  style={{
-    position:  "absolute",
-    inset:     0,
-    width:     "100%",
-    height:    "100%",
-    objectFit: "cover",
-    zIndex:    0,
-    opacity:   0.35,  // ← raise to 0.3 for more visible, lower to 0.08 for subtle
-  }}>
-  <source src="/images/hero-bg.mp4" type="video/mp4" />
-</video>
-
+      {/* Background video slot */}
+      <video autoPlay muted loop playsInline style={{
+        position: "absolute", inset: 0,
+        width: "100%", height: "100%",
+        objectFit: "cover", zIndex: 0, opacity: 0.18,
+      }}>
+        <source src="/images/hero-bg.mp4" type="video/mp4" />
+      </video>
 
       {/* Background grid lines */}
-      <div
-        style={{
-          position: "absolute",
-          inset: -2,
-          backgroundImage: `linear-gradient(${BORDER} 1px, transparent 1px), linear-gradient(90deg, ${BORDER} 1px, transparent 1px)`,
-          backgroundSize: "60px 60px",
-          borderRadius:32,
-          zIndex: 0,
-        }}
-      />
+      <div style={{
+        position: "absolute", inset: 0, zIndex: 0,
+        backgroundImage: `linear-gradient(rgba(0,255,135,0.04) 1px, transparent 1px),
+                          linear-gradient(90deg, rgba(0,255,135,0.04) 1px, transparent 1px)`,
+        backgroundSize: "60px 60px",
+      }} />
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          maxWidth: 1200,
-          margin: "0 auto",
-          gap: isMobile ? 48 : 0,
-          position: "relative",
-          zIndex: 1,
-        }}
-      >
-        {/* LEFT — text content */}
-        <motion.div
-          style={{ flex: 1, maxWidth: 600 }}
-          variants={stagger}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Label */}
+      {/* Content wrapper */}
+      <div style={{
+        display:        "flex",
+        // Stack vertically on mobile, side by side on desktop
+        flexDirection:  isMobile ? "column" : "row",
+        alignItems:     isMobile ? "flex-start" : "center",
+        justifyContent: "space-between",
+        width:          "100%",
+        maxWidth:       isTV ? 1600 : 1200,
+        margin:         "0 auto",
+        gap:            isMobile ? 32 : isTablet ? 40 : 0,
+        position:       "relative",
+        zIndex:         2,
+      }}>
+
+        {/* ══════════════════════════════════════════════
+            MOBILE PROFILE CIRCLE
+            Only visible on phones — sits above the name
+            Shows your photo in a circle like a profile pic
+        ══════════════════════════════════════════════ */}
+        {isMobile && (
           <motion.div
-            variants={fadeUp}
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5, ease: "backOut" as const }}
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              marginBottom: 24,
+              display:      "flex",
+              alignItems:   "center",
+              gap:          14,
+              marginBottom: 8,
             }}
           >
-            <span
-              style={{ width: 32, height: 2, background: A, display: "block" }}
+            {/* Circle photo */}
+            <div style={{
+              width:        64,
+              height:       64,
+              borderRadius: "50%",
+              overflow:     "hidden",
+              border:       "2px solid rgba(0,255,135,0.5)",
+              flexShrink:   0,
+              position:     "relative",
+              background:   "#0a0a0a",
+              boxShadow:    "0 0 20px rgba(0,255,135,0.2)",
+            }}>
+              {!photoError && (
+                <img
+                  src={PROFILE.avatar ?? "/images/hero.jpg"}
+                  alt={PROFILE.name}
+                  style={{
+                    width:     "100%",
+                    height:    "100%",
+                    objectFit: "cover" as const,
+                    opacity:   photoLoaded ? 1 : 0,
+                    transition: "opacity 0.4s",
+                  }}
+                  onLoad={() => setPhotoLoaded(true)}
+                  onError={() => setPhotoError(true)}
+                />
+              )}
+              {/* Initials fallback */}
+              {(photoError || !photoLoaded) && (
+                <div style={{
+                  position:       "absolute",
+                  inset:          0,
+                  display:        "flex",
+                  alignItems:     "center",
+                  justifyContent: "center",
+                  background:     "linear-gradient(135deg,#00ff87,#00e5ff)",
+                  fontSize:       70,
+                  fontWeight:     800,
+                  color:          "#050505",
+                  fontFamily:     FONT_HEAD,
+                }}>
+                  {initials}
+                </div>
+              )}
+            </div>
+
+            {/* Name next to circle on mobile */}
+            <div>
+              <p style={{ fontSize: 13, fontWeight: 700, color: "#033b1a", fontFamily: FONT_HEAD }}>
+                {PROFILE.title}
+              </p>
+              <p style={{ fontSize: 11, color: A, fontWeight: 600, letterSpacing: "0.05em" }}>
+                {PROFILE.subtitle}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* LEFT — text content */}
+        <motion.div
+          style={{
+            flex:     1,
+            maxWidth: isTV ? 700 : 600,
+          }}
+          variants={stagger} initial="hidden" animate="visible"
+        >
+          {/* Available label */}
+          <motion.div variants={fadeUp} style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+            <motion.span
+              style={{ width: 8, height: 8, borderRadius: "50%", background: A, display: "block" }}
+              animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 2, repeat: Infinity }}
             />
-            <span
-              style={{
-                fontSize: 12,
-                color: A,
-                fontWeight: 600,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase" as const,
-              }}
-            >
-            
+            <span style={{ fontSize: isMobile ? 10 : 12, color: A, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase" as const }}>
+              Available for Opportunities
             </span>
           </motion.div>
 
-          {/* NAME — huge gradient */}
-          <motion.h1
-            variants={fadeUp}
-            style={{
-              fontFamily: FONT_HEAD,
-              fontSize: "clamp(44px, 9vw, 88px)",
-              fontWeight: 800,
-              lineHeight: 1.0,
-              letterSpacing: "-0.05em",
-              margin: "0 0 20px",
-            }}
-          >
+          {/* NAME */}
+          <motion.h1 variants={fadeUp} style={{
+            fontFamily:    FONT_HEAD,
+            // clamp scales from 36px on phone to 88px on TV
+            fontSize:      isMobile ? "clamp(36px, 10vw, 52px)" : isTV ? "clamp(64px, 5vw, 100px)" : "clamp(44px, 9vw, 88px)",
+            fontWeight:    800,
+            lineHeight:    1.0,
+            letterSpacing: "-0.05em",
+            margin:        "0 0 16px",
+          }}>
             <span className="g-name">{PROFILE.name.split(" ")[0]}</span>
             <br />
-            <span style={{ color: TEXT }}>
+            <span style={{ color: "#f0f0f0" }}>
               {PROFILE.name.split(" ").slice(1).join(" ")}
             </span>
           </motion.h1>
 
-          {/* Title */}
-          <motion.p
-            variants={fadeUp}
-            style={{
-              fontSize: "clamp(15px, 2.5vw, 20px)",
-              color: TEXT2,
-              lineHeight: 1.6,
-              maxWidth: 480,
-              margin: "0 0 40px",
-            }}
-          >
+          {/* Bio */}
+          <motion.p variants={fadeUp} style={{
+            fontSize:   isMobile ? 14 : isTV ? 20 : "clamp(15px, 2vw, 18px)",
+            color:      "#888",
+            lineHeight: 1.7,
+            maxWidth:   480,
+            margin:     "0 0 32px",
+          }}>
             {PROFILE.bio}
           </motion.p>
 
-          {/* CTAs */}
-          <motion.div
-            variants={fadeUp}
-            style={{ display: "flex", gap: 16, flexWrap: "wrap" as const }}
-          >
-            <a
-              href="#projects"
+          {/* CTA buttons */}
+          <motion.div variants={fadeUp} style={{ display: "flex", gap: 12, flexWrap: "wrap" as const }}>
+            <motion.a href="#projects"
               style={{
-                padding: "14px 32px",
-                background: A,
-                color: BG,
+                padding:     isMobile ? "12px 24px" : "14px 32px",
+                background:  A,
+                color:       "#050505",
                 borderRadius: 8,
-                fontWeight: 700,
-                fontSize: 14,
-                letterSpacing: "0.04em",
-                fontFamily: FONT_HEAD,
+                fontWeight:  700,
+                fontSize:    isMobile ? 13 : 14,
+                fontFamily:  FONT_HEAD,
+                display:     "inline-block",
               }}
-            >
+              whileHover={{ scale: 1.04, boxShadow: `0 0 30px rgba(0,255,135,0.4)` }}
+              whileTap={{ scale: 0.97 }}>
               View My Work
-            </a>
-            <a
-              href={`mailto:${PROFILE.email}`}
+            </motion.a>
+
+            <motion.a href={`mailto:${PROFILE.email}`}
               style={{
-                padding: "14px 32px",
-                border: `1px solid rgba(12, 165, 165, 0.5)`,
-                color: TEXT,
+                padding:      isMobile ? "12px 24px" : "14px 32px",
+                border:       "1px solid rgba(0,255,135,0.5)",
+                color:        "#f0f0f0",
                 borderRadius: 8,
-                fontWeight: 500,
-                fontSize: 14,
-                letterSpacing: "0.02em",
+                fontWeight:   500,
+                fontSize:     isMobile ? 13 : 14,
+                display:      "inline-block",
               }}
-            >
+              whileHover={{ borderColor: A, color: A }}
+              whileTap={{ scale: 0.97 }}>
               Get in Touch
-            </a>
+            </motion.a>
           </motion.div>
 
-          {/* Stats row */}
-          <motion.div
-            variants={fadeUp}
-            style={{
-              display: "flex",
-              gap: 32,
-              marginTop: 56,
-              paddingTop: 32,
-              borderTop: `1px solid ${BORDER}`,
-            }}
-          >
+          {/* Stats */}
+          <motion.div variants={fadeUp} style={{
+            display:    "flex",
+            gap:        isMobile ? 20 : 32,
+            marginTop:  isMobile ? 36 : 56,
+            paddingTop: isMobile ? 24 : 32,
+            borderTop:  "1px solid rgba(0,255,135,0.1)",
+          }}>
             {[
-              { n: PROJECTS.length, l: "Projects Built" },
-              { n: SKILLS.length, l: "Skills" },
-              { n: QUALIFICATIONS.length, l: "Qualifications" },
+              { n: `${PROJECTS.length}+`,       l: "Projects" },
+              { n: `${SKILLS.length}+`,          l: "Skills"   },
+              { n: `${QUALIFICATIONS.length}+`,  l: "Degrees"  },
             ].map(({ n, l }) => (
               <div key={l}>
-                <p
-                  style={{
-                    fontFamily: FONT_HEAD,
-                    fontSize: 28,
-                    fontWeight: 800,
-                    color: A,
-                    lineHeight: 1,
-                    marginBottom: 4,
-                  }}
-                >
-                  {n}+
-                </p>
-                <p
-                  style={{
-                    fontSize: 11,
-                    color: TEXT3,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase" as const,
-                  }}
-                >
-                  {l}
-                </p>
+                <p style={{ fontFamily: FONT_HEAD, fontSize: isMobile ? 22 : 28, fontWeight: 800, color: A, lineHeight: 1, marginBottom: 4 }}>{n}</p>
+                <p style={{ fontSize: isMobile ? 9 : 11, color: "#444", letterSpacing: "0.08em", textTransform: "uppercase" as const }}>{l}</p>
               </div>
             ))}
           </motion.div>
         </motion.div>
 
-        {/* RIGHT — portrait photo with geometric overlay */}
+        {/* RIGHT — big portrait (desktop only) */}
         {!isMobile && (
           <motion.div
-            style={{ position: "relative", width: 380, flexShrink: 0 }}
-            initial={{ opacity: 0, x: 40 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
-            {/* ═══════════════════════════════════════════════════
-                📸 HERO PORTRAIT PHOTO
-                
-                Where to put your photo:
-                  my-portfolio/
-                    public/
-                      images/
-                        hero.jpg   ← your photo here
-                
-                Ideal specs:
-                  • Portrait/vertical orientation
-                  • Good lighting, ideally against dark background
-                  • Min 400×500 pixels, JPG or PNG
-                  • Transparent PNG works great too
-                
-                The geometric grid appears on mouse hover.
-                A neon glow border frames the photo.
-            ════════════════════════════════════════════════════ */}
+            style={{ position: "relative", width: isTablet ? 300 : isTV ? 480 : 380, flexShrink: 0 }}
+            initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}>
+
             <div
-              style={{
-                position: "relative",
-                width: 340,
-                height: 440,
-                cursor: "none",
-              }}
+              style={{ position: "relative", width: isTablet ? 260 : isTV ? 420 : 340, height: isTablet ? 360 : isTV ? 560 : 440 }}
               onMouseEnter={() => setPhotoHovered(true)}
               onMouseLeave={() => setPhotoHovered(false)}
             >
-              {/* Neon glow frame */}
-              <div
-                style={{
-                  position: "absolute",
-                  inset: -2,
-                  borderRadius: 40,
-                  background: `linear-gradient(135deg, ${A}60, ${A2}40)`,
-                  zIndex: 0,
-                }}
-              />
+              {/* Animated glow border */}
+              <motion.div style={{ position: "absolute", inset: -2, borderRadius: 40, zIndex: 0 }}
+                animate={{ background: [
+                  "linear-gradient(135deg,rgba(0,255,135,0.6),rgba(0,229,255,0.3))",
+                  "linear-gradient(225deg,rgba(0,229,255,0.6),rgba(0,255,135,0.3))",
+                  "linear-gradient(135deg,rgba(0,255,135,0.6),rgba(0,229,255,0.3))",
+                ]}}
+                transition={{ duration: 4, repeat: Infinity }} />
 
-                     
-              {/* Photo */}
-              <div
-                style={{
-                  position: "relative",
-                  width: "100%",
-                  height: "100%",
-                  borderRadius: 45,
-                  overflow: "hidden",
-                  zIndex: 1,
-                  background: BG3,
-                }}
-              >
-                <img
-                  src="/images/hero.jpg"
-                  alt={PROFILE.name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover" as const,
-                    display: "block",
-                  }}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).style.display = "none";
-                  }}
-                />
-                       
-
-                 
-                {/* Initials fallback (shows behind the image) */}
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    zIndex: -1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: `linear-gradient(135deg, ${BG2}, ${BG3})`,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: FONT_HEAD,
-                      fontSize: 80,
-                      fontWeight: 800,
-                      color: `${A}30`,
-                    }}
-                  >
-                    {initials}
-                  </span>
+              <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: 38, overflow: "hidden", zIndex: 1, background: "#0a0a0a" }}>
+                {!photoError && (
+                  <img
+                    src={PROFILE.avatar ?? "/images/hero.jpg"}
+                    alt={PROFILE.name}
+                    style={{ width: "100%", height: "100%", objectFit: "cover" as const, opacity: photoLoaded ? 1 : 0, transition: "opacity 0.5s", display: "block" }}
+                    onLoad={() => setPhotoLoaded(true)}
+                    onError={() => setPhotoError(true)}
+                  />
+                )}
+                <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "linear-gradient(135deg,#0a1a0e,#0d2018)", zIndex: photoLoaded && !photoError ? -1 : 0 }}>
+                  <span style={{ fontFamily: FONT_HEAD, fontSize: 72, fontWeight: 800, color: "rgba(0,255,135,0.2)" }}>{initials}</span>
                 </div>
 
-                {/* Hover geometric grid overlay */}
-                <motion.div
-                  style={{ position: "absolute", inset: 0, zIndex: 2 }}
-                  animate={{ opacity: photoHovered ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <svg
-                    width="100%"
-                    height="100%"
-                    style={{ position: "absolute", inset: 0 }}
-                  >
-                    {/* Vertical lines */}
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <motion.line
-                        key={`v${i}`}
-                        x1={`${(i * 100) / 6}%`}
-                        y1="0"
-                        x2={`${(i * 100) / 6}%`}
-                        y2="100%"
-                        stroke={A}
-                        strokeWidth="0.6"
-                        strokeOpacity="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: photoHovered ? 1 : 0 }}
-                        transition={{ duration: 0.4, delay: i * 0.05 }}
-                      />
+                {/* Hover grid overlay */}
+                <motion.div style={{ position: "absolute", inset: 0, zIndex: 2 }} animate={{ opacity: photoHovered ? 1 : 0 }} transition={{ duration: 0.3 }}>
+                  <svg width="100%" height="100%" style={{ position: "absolute", inset: 0 }}>
+                    {[1,2,3,4,5].map(i => (
+                      <motion.line key={`v${i}`} x1={`${i*100/6}%`} y1="0" x2={`${i*100/6}%`} y2="100%" stroke={A} strokeWidth="0.6" strokeOpacity="0.5"
+                        initial={{ pathLength: 0 }} animate={{ pathLength: photoHovered ? 1 : 0 }} transition={{ duration: 0.4, delay: i*0.05 }} />
                     ))}
-                    {/* Horizontal lines */}
-                    {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-                      <motion.line
-                        key={`h${i}`}
-                        x1="0"
-                        y1={`${(i * 100) / 8}%`}
-                        x2="100%"
-                        y2={`${(i * 100) / 8}%`}
-                        stroke={A}
-                        strokeWidth="0.6"
-                        strokeOpacity="0.5"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: photoHovered ? 1 : 0 }}
-                        transition={{ duration: 0.4, delay: i * 0.04 }}
-                      />
+                    {[1,2,3,4,5,6,7].map(i => (
+                      <motion.line key={`h${i}`} x1="0" y1={`${i*100/8}%`} x2="100%" y2={`${i*100/8}%`} stroke={A} strokeWidth="0.6" strokeOpacity="0.5"
+                        initial={{ pathLength: 0 }} animate={{ pathLength: photoHovered ? 1 : 0 }} transition={{ duration: 0.4, delay: i*0.04 }} />
                     ))}
-                    {/* Corner brackets */}
-                    <motion.path
-                      d="M 10 30 L 10 10 L 30 10"
-                      stroke={A}
-                      strokeWidth="2"
-                      fill="none"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: photoHovered ? 1 : 0 }}
-                      transition={{ duration: 0.3 }}
-                    />
-                    <motion.path
-                      d="M 90% 10 L calc(100% - 10px) 10 L calc(100% - 10px) 30"
-                      stroke={A}
-                      strokeWidth="2"
-                      fill="none"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: photoHovered ? 1 : 0 }}
-                      transition={{ duration: 0.3, delay: 0.1 }}
-                    />
-                    <motion.path
-                      d="M 10 70% L 10 calc(100% - 10px) L 30 calc(100% - 10px)"
-                      stroke={A}
-                      strokeWidth="2"
-                      fill="none"
-                      initial={{ pathLength: 0 }}
-                      animate={{ pathLength: photoHovered ? 1 : 0 }}
-                      transition={{ duration: 0.3, delay: 0.05 }}
-                    />
                   </svg>
-                  {/* Dark overlay for contrast */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      background: "rgba(0,0,0,0.35)",
-                    }}
-                  />
-                  {/* Hover label */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: 20,
-                      left: 20,
-                      fontSize: 11,
-                      color: A,
-                      fontWeight: 600,
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase" as const,
-                    }}
-                  >
+                  <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.35)" }} />
+                  <div style={{ position: "absolute", bottom: 20, left: 20, fontSize: 11, color: A, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" as const }}>
                     {PROFILE.title}
                   </div>
                 </motion.div>
+
+                {/* Scan line */}
+                <motion.div style={{ position: "absolute", left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,${A}60,transparent)`, zIndex: 4 }}
+                  animate={{ top: ["0%","100%","0%"] }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }} />
               </div>
 
-              {/* Floating accent card — top right */}
-              <motion.div
-                style={{
-                  position: "absolute",
-                  top: -16,
-                  right: -20,
-                  background: BG3,
-                  border: `1px solid ${BORDER}`,
-                  borderRadius: 10,
-                  padding: "10px 16px",
-                  zIndex: 10,
-                }}
-                animate={{ y: [0, -6, 0] }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: 10,
-                    color: A,
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
-                  }}
-                >
-                  AVAILABLE FOR
-                </p>
-                <p style={{ fontSize: 12, color: TEXT, fontWeight: 600 }}>
-                  Internships &amp; Projects
-                </p>
+              {/* Floating cards */}
+              <motion.div style={{ position: "absolute", top: -16, right: -20, background: "rgba(10,10,10,0.95)", border: "1px solid rgba(0,255,135,0.2)", borderRadius: 10, padding: "10px 16px", zIndex: 10, backdropFilter: "blur(10px)" }}
+                animate={{ y: [0,-7,0] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}>
+                <p style={{ fontSize: 10, color: A, fontWeight: 700, letterSpacing: "0.08em" }}>AVAILABLE FOR</p>
+                <p style={{ fontSize: 12, color: "#f0f0f0", fontWeight: 600 }}>Internships &amp; Projects</p>
               </motion.div>
 
-              {/* Floating accent card — bottom left */}
-              <motion.div
-                style={{
-                  position: "absolute",
-                  bottom: -16,
-                  left: -20,
-                  background: BG3,
-                  border: `1px solid ${BORDER}`,
-                  borderRadius: 10,
-                  padding: "10px 16px",
-                  zIndex: 10,
-                }}
-                animate={{ y: [0, 6, 0] }}
-                transition={{
-                  duration: 3.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: 0.5,
-                }}
-              >
-                <p
-                  style={{
-                    fontSize: 10,
-                    color: A2,
-                    fontWeight: 700,
-                    letterSpacing: "0.08em",
-                  }}
-                >
-                  LOCATION
-                </p>
-                <p style={{ fontSize: 12, color: TEXT, fontWeight: 600 }}>
-                  📍 {PROFILE.location}
-                </p>
+              <motion.div style={{ position: "absolute", bottom: -16, left: -20, background: "rgba(10,10,10,0.95)", border: "1px solid rgba(0,229,255,0.2)", borderRadius: 10, padding: "10px 16px", zIndex: 10, backdropFilter: "blur(10px)" }}
+                animate={{ y: [0,7,0] }} transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}>
+                <p style={{ fontSize: 10, color: A2, fontWeight: 700, letterSpacing: "0.08em" }}>LOCATION</p>
+                <p style={{ fontSize: 12, color: "#f0f0f0", fontWeight: 600 }}>📍 {PROFILE.location}</p>
               </motion.div>
             </div>
           </motion.div>
@@ -841,30 +675,10 @@ function HeroSection() {
       </div>
 
       {/* Scroll indicator */}
-      <motion.div
-        style={{
-          position: "absolute",
-          bottom: 32,
-          left: "50%",
-          transform: "translateX(-50%)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 8,
-        }}
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <span style={{ fontSize: 10, color: TEXT3, letterSpacing: "0.1em" }}>
-          SCROLL
-        </span>
-        <div
-          style={{
-            width: 1,
-            height: 40,
-            background: `linear-gradient(${A}, transparent)`,
-          }}
-        />
+      <motion.div style={{ position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)", display: "flex", flexDirection: "column" as const, alignItems: "center", gap: 6 }}
+        animate={{ y: [0,8,0] }} transition={{ duration: 2, repeat: Infinity }}>
+        <span style={{ fontSize: 9, color: "#444", letterSpacing: "0.1em" }}>SCROLL</span>
+        <div style={{ width: 1, height: 32, background: `linear-gradient(${A},transparent)` }} />
       </motion.div>
     </section>
   );
