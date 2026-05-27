@@ -378,13 +378,13 @@ function HeroSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
 // Add this useEffect right after it:
-useEffect(() => {
-  const v = videoRef.current;
-  if (v) {
+   useEffect(() => {
+   const v = videoRef.current;
+   if (v) {
     v.muted = true;           // ensure muted (some browsers reset this)
     v.play().catch(() => {}); // force play silently
-  }
-}, []);
+   }
+    }, []);
 
 
   return (
