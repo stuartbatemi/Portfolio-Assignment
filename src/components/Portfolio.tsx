@@ -75,6 +75,15 @@ function GlobalStyles() {
       ::-webkit-scrollbar-thumb { background: ${A}40; border-radius: 99px; }
       ::-webkit-scrollbar-thumb:hover { background: ${A}80; }
       a { color: inherit; text-decoration: none; }
+      
+      /* Hide iOS video play button overlay */
+      video::-webkit-media-controls { display: none !important; }
+      video::-webkit-media-controls-start-playback-button { display: none !important; }
+      video::--webkit-media-controls-overlay-play-button { display: none !important; }
+
+/* Prevent iOS from treating video as interactive */
+video { -webkit-touch-callout: none; }
+
 
       /* Subtle background grain */
       body::after {
@@ -401,23 +410,23 @@ function HeroSection() {
       {/* Background video slot */}
       {/* Background video — auto-plays on all devices including iPhone */}
       <video
-        ref={videoRef} // ← uses the stable ref, not inline function
-        autoPlay
-        muted
-        loop
-        playsInline
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          zIndex: 0,
-          opacity: 0.28,
-        }}
-      >
-        <source src="/images/hero-bg.mp4" type="video/mp4" />
-      </video>
+  ref={videoRef}
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="auto"          // ← tells browser to load video immediately
+  style={{
+    position:  "absolute",
+    inset:     0,
+    width:     "100%",
+    height:    "100%",
+    objectFit: "cover",
+    zIndex:    0,
+    opacity:   0.28,
+  }}
+  src="/images/hero-bg.mp4"  // ← put src directly on video, not in <source>
+/>
 
       {/* Background grid lines */}
       <div
