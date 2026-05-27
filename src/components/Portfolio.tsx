@@ -1,127 +1,146 @@
 // ============================================================
-// src/components/Portfolio.tsx — BEAUTIFUL COLOR UPGRADE
+// src/components/Portfolio.tsx — PREMIUM CINEMATIC VERSION
 //
-// COLOR SYSTEM:
-//   Text is now bright and readable everywhere.
-//   Uses a full spectrum: indigo · violet · cyan · emerald · rose
-//   Gradient text on headings, glowing borders, vibrant accents.
+// PHOTO PLACEMENT GUIDE:
+//   public/
+//     images/
+//       hero.jpg          ← your main portrait (hero section)
+//       project1.jpg      ← project screenshot 1
+//       project2.jpg      ← project screenshot 2
+//       project3.jpg      ← project screenshot 3
+//
+// HOW TO ADD YOUR PHOTO:
+//   1. Create folder: public/images/
+//   2. Copy your photo there as hero.jpg
+//   3. The hero section shows it automatically
+//   If no photo → shows your initials in a gradient circle
+//
+// NEW IN THIS VERSION:
+//   ✅ Full-screen cinematic hero with geometric photo overlay
+//   ✅ Cursor glow that follows your mouse
+//   ✅ Top navbar (replaces sidebar) — transparent → solid on scroll
+//   ✅ Manifesto section (big scroll-reveal text)
+//   ✅ Asymmetric project grid with hover reveals
+//   ✅ Interactive skills matrix
+//   ✅ Vertical timeline (education + milestones)
+//   ✅ Cinematic footer with giant CTA
+//   ✅ Framer Motion scroll-triggered animations throughout
+//   ✅ Electric neon green accent (#00ff87)
+//   ✅ Premium Space Grotesk + Inter typography
 // ============================================================
 
-import React, { useState, useEffect } from "react";
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
 
 import {
-  PROFILE, SKILLS, QUALIFICATIONS, PROJECTS, NAV_ITEMS, CATEGORY_COLORS,
-} from "../data/portfolio";
-import type { Skill, Qualification, Project, NavItem } from "../data/portfolio";
+  motion,
+  AnimatePresence,
+  type Variants,
+} from "framer-motion";
+
+import { PROFILE, SKILLS, QUALIFICATIONS, PROJECTS } from "../data/portfolio";
+import type { Skill, Qualification, Project } from "../data/portfolio";
 
 // ============================================================
-// COLOUR PALETTE — single source of truth
-// Change any colour here → updates everywhere automatically
+// DESIGN SYSTEM — one place to change everything
 // ============================================================
-const C = {
-  // Backgrounds
-  bg:        "#060612",
-  bg2:       "#0c0c1e",
-  bg3:       "#10102a",
-  bgCard:    "rgba(255,255,255,0.03)",
-  border:    "rgba(255,255,255,0.09)",
-  borderHov: "rgba(129,140,248,0.55)",
-
-  // Text — ALL much brighter than before
-  textPrimary:  "#f0f0ff",   // near white with a cool blue tint — headings
-  textBody:     "#b0b0d0",   // light lavender-grey — body text (was dark #4a4a6a)
-  textMuted:    "#6868a0",   // medium purple-grey — secondary info
-  textDim:      "#404068",   // dim — labels, footers
-
-  // Accent colours — the full spectrum
-  indigo:   "#818cf8",
-  violet:   "#c084fc",
-  cyan:     "#22d3ee",
-  emerald:  "#34d399",
-  rose:     "#f472b6",
-  amber:    "#fbbf24",
-  sky:      "#38bdf8",
-
-  // Gradients
-  gradName:    "linear-gradient(135deg, #ffffff 0%, #818cf8 45%, #c084fc 100%)",
-  gradTitle:   "linear-gradient(90deg, #818cf8, #22d3ee)",
-  gradAccent:  "linear-gradient(90deg, #818cf8, #c084fc, #22d3ee)",
-  gradSidebar: "linear-gradient(180deg, rgba(129,140,248,0.06) 0%, rgba(34,211,238,0.03) 100%)",
-  gradCard:    "linear-gradient(135deg, rgba(129,140,248,0.06), rgba(192,132,252,0.04))",
-};
+const A = "#00ff87"; // neon accent (electric mint)
+const A2 = "#0099ff"; // secondary accent (electric cyan)
+const BG = "#e2d3d3e8"; // near-black
+const BG2 = "#0a0a0a";
+const BG3 = "#111111";
+const TEXT = "#383333"; // primary text — bright
+const TEXT2 = "#868484"; // secondary text
+const TEXT3 = "#444444"; // dim text
+const BORDER = `rgba(0,255,135,0.12)`;
+const BORDERH = `rgba(14, 177, 22, 0.45)`;
+const FONT_HEAD = "'Space Grotesk', 'Segoe UI', system-ui, sans-serif";
+const FONT_BODY = "'Inter', 'Segoe UI', system-ui, sans-serif";
 
 // ============================================================
-// INJECT GLOBAL STYLES (background orbs + scrollbar + body)
-// Using a style tag because React inline styles can't do ::before
+// GLOBAL STYLES + FONT INJECTION
 // ============================================================
 function GlobalStyles() {
   useEffect(() => {
-    const el = document.createElement("style");
-    el.innerHTML = `
+    // Inject Google Fonts
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@300;400;500&display=swap";
+    document.head.appendChild(link);
+
+    // Inject CSS
+    const style = document.createElement("style");
+    style.innerHTML = `
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html { scroll-behavior: smooth; }
-      body {
-        background: ${C.bg};
-        overflow-x: hidden;
-        -webkit-font-smoothing: antialiased;
-      }
-      /* Custom scrollbar */
-      ::-webkit-scrollbar       { width: 4px; }
-      ::-webkit-scrollbar-track { background: ${C.bg}; }
-      ::-webkit-scrollbar-thumb { background: rgba(129,140,248,0.25); border-radius: 99px; }
-      ::-webkit-scrollbar-thumb:hover { background: rgba(129,140,248,0.5); }
+      body { background: ${BG}; color: ${TEXT}; font-family: ${FONT_BODY}; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+      ::selection { background: ${A}22; color: ${A}; }
+      ::-webkit-scrollbar { width: 3px; }
+      ::-webkit-scrollbar-track { background: ${BG}; }
+      ::-webkit-scrollbar-thumb { background: ${A}40; border-radius: 99px; }
+      ::-webkit-scrollbar-thumb:hover { background: ${A}80; }
+      a { color: inherit; text-decoration: none; }
 
-      /* Animated background orbs */
-      body::before, body::after {
-        content: '';
-        position: fixed;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 0;
-        filter: blur(110px);
-        animation: drift 22s ease-in-out infinite alternate;
-      }
-      body::before {
-        width: 700px; height: 700px;
-        background: radial-gradient(circle, rgba(129,140,248,0.14), transparent 65%);
-        top: -250px; left: -150px;
-      }
+      /* Subtle background grain */
       body::after {
-        width: 600px; height: 600px;
-        background: radial-gradient(circle, rgba(34,211,238,0.10), transparent 65%);
-        bottom: -200px; right: -100px;
-        animation-delay: -11s;
-      }
-      @keyframes drift {
-        0%   { transform: translate(0,0) scale(1); }
-        100% { transform: translate(50px, 35px) scale(1.08); }
+        content: '';
+        position: fixed; inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        opacity: 0.025; pointer-events: none; z-index: 9999;
       }
 
-      /* Gradient text utility — used on name and section titles */
-      .grad-text {
-        background: ${C.gradName};
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      .grad-title {
-        background: ${C.gradTitle};
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
+      /* Section base */
+      section { position: relative; z-index: 1; }
+
+      /* Gradient text */
+      .g-name  { background: linear-gradient(135deg,#fff 0%,${A} 50%,${A2} 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+      .g-accent{ background: linear-gradient(90deg,${A},${A2}); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+      @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+      @keyframes spin  { to { transform: rotate(360deg); } }
+      @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
     `;
-    document.head.appendChild(el);
-    return () => { document.head.removeChild(el); };
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(link);
+      document.head.removeChild(style);
+    };
   }, []);
   return null;
 }
 
 // ============================================================
-// RESPONSIVE HOOK
+// CURSOR GLOW — follows mouse with a soft neon glow
 // ============================================================
-function useWindowWidth(): number {
+function CursorGlow() {
+  const [pos, setPos] = useState({ x: -300, y: -300 });
+  useEffect(() => {
+    const fn = (e: MouseEvent) => setPos({ x: e.clientX, y: e.clientY });
+    window.addEventListener("mousemove", fn);
+    return () => window.removeEventListener("mousemove", fn);
+  }, []);
+  return (
+    <div
+      style={{
+        position: "fixed",
+        left: pos.x - 200,
+        top: pos.y - 200,
+        width: 400,
+        height: 400,
+        borderRadius: "50%",
+        background: `radial-gradient(circle, rgba(0,255,135,0.05), transparent 70%)`,
+        pointerEvents: "none",
+        zIndex: 998,
+        transition: "left 0.12s ease, top 0.12s ease",
+      }}
+    />
+  );
+}
+
+// ============================================================
+// HOOKS
+// ============================================================
+function useWindowWidth() {
   const [w, setW] = useState(window.innerWidth);
   useEffect(() => {
     const fn = () => setW(window.innerWidth);
@@ -132,550 +151,1755 @@ function useWindowWidth(): number {
 }
 
 // ============================================================
-// INTERFACES
-// ============================================================
-interface SkillBarProps     { name: string; level: number; category: string; index: number; }
-interface ProjectCardProps  { title: string; description: string; tech: string[]; image: string | null; link: string; featured: boolean; index: number; }
-interface QualCardProps     { degree: string; school: string; year: string; description: string; index: number; }
-interface ContactRowProps   { icon: string; label: string; value: string; href: string | null; iconColor: string; }
-interface SectionHeaderProps{ title: string; sub: string; }
-interface StatProps         { n: number; l: string; color: string; }
-
-// ============================================================
 // ANIMATION VARIANTS
 // ============================================================
 const fadeUp: Variants = {
-  hidden:  { opacity: 0, y: 22 },
-  visible: { opacity: 1, y: 0  },
+  hidden: { opacity: 0, y: 32 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" as const },
+  },
 };
 const stagger: Variants = {
-  visible: { transition: { staggerChildren: 0.065 } },
+  visible: { transition: { staggerChildren: 0.08 } },
 };
-const page: Variants = {
-  hidden:  { opacity: 0, x: 18 },
-  visible: { opacity: 1, x: 0,   transition: { duration: 0.3, ease: "easeOut" as const } },
-  exit:    { opacity: 0, x: -18, transition: { duration: 0.18, ease: "easeIn" as const  } },
+const fadeIn: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.8 } },
 };
 
 // ============================================================
-// SMALL COMPONENTS
+// NAVBAR — transparent on hero, solid on scroll
 // ============================================================
-
-// ── SkillBar ─────────────────────────────────────────────────
-function SkillBar({ name, level, category, index }: SkillBarProps) {
-  const pct   = (level / 5) * 100;
-  const color = CATEGORY_COLORS[category] ?? C.indigo;
-  return (
-    <motion.div variants={fadeUp} style={s.skillRow}>
-      <div style={s.skillMeta}>
-        <span style={{ ...s.skillName, color: C.textBody }}>{name}</span>
-        <span style={{
-          ...s.badge,
-          backgroundColor: color + "18",
-          color,
-          border: `1px solid ${color}35`,
-        }}>{category}</span>
-      </div>
-      <div style={s.barTrack}>
-        <motion.div
-          style={{ ...s.barFill, background: `linear-gradient(90deg, ${color}, ${color}99)` }}
-          initial={{ width: 0 }}
-          whileInView={{ width: `${pct}%` }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, delay: index * 0.04, ease: "easeOut" as const }}
-        />
-      </div>
-      <span style={{ ...s.levelLabel, color: C.textMuted }}>
-        {level}<span style={{ color: C.textDim }}>/5</span>
-      </span>
-    </motion.div>
-  );
-}
-
-// ── ProjectCard ───────────────────────────────────────────────
-function ProjectCard({ title, description, tech, image, link, featured }: ProjectCardProps) {
-  const [hov, setHov] = useState(false);
-  return (
-    <motion.div
-      variants={fadeUp}
-      style={{
-        ...s.card,
-        borderColor: hov ? C.borderHov : C.border,
-        boxShadow:   hov ? `0 0 0 1px rgba(129,140,248,0.3), 0 12px 40px rgba(129,140,248,0.12)` : "none",
-        background:  hov ? C.gradCard : C.bgCard,
-      }}
-      whileHover={{ y: -7 }}
-      transition={{ type: "spring", stiffness: 280, damping: 22 }}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-    >
-      <div style={s.cardImg}>
-        {image
-          ? <img src={image} alt={title} style={{ width: "100%", height: "100%", objectFit: "cover" as const }} />
-          : <div style={s.cardImgPlaceholder}><span style={{ fontSize: 30, color: "rgba(129,140,248,0.2)" }}>◉</span></div>
-        }
-        {featured && <span style={s.featuredBadge}>✦ Featured</span>}
-      </div>
-      <div style={s.cardBody}>
-        <h3 style={{ ...s.cardTitle, color: C.textPrimary }}>{title}</h3>
-        <p  style={{ ...s.cardDesc,  color: C.textBody   }}>{description}</p>
-        <div style={s.techList}>
-          {tech.map((t: string) => (
-            <span key={t} style={s.techBadge}>{t}</span>
-          ))}
-        </div>
-        {link && link !== "#" && (
-          <a href={link} target="_blank" rel="noreferrer" style={s.cardLink}>
-            View Live →
-          </a>
-        )}
-      </div>
-    </motion.div>
-  );
-}
-
-// ── QualCard ──────────────────────────────────────────────────
-// Each qualification gets a different accent colour for variety
-const QUAL_COLORS = [C.indigo, C.violet, C.cyan, C.emerald];
-
-function QualCard({ degree, school, year, description, index }: QualCardProps) {
-  const color = QUAL_COLORS[index % QUAL_COLORS.length];
-  return (
-    <motion.div variants={fadeUp} style={s.qualCard}>
-      <motion.div
-        style={{ ...s.qualAccent, background: `linear-gradient(180deg, ${color}, ${color}44)` }}
-        initial={{ height: 0 }} whileInView={{ height: "100%" }} viewport={{ once: true }}
-        transition={{ duration: 0.55, delay: index * 0.1 }}
-      />
-      <div style={s.qualContent}>
-        <div style={s.qualHeader}>
-          <h3 style={{ ...s.qualDegree, color: C.textPrimary }}>{degree}</h3>
-          <span style={{ ...s.qualYear, color }}>{year}</span>
-        </div>
-        <p style={{ ...s.qualSchool, color: C.textMuted }}>{school}</p>
-        <p style={{ ...s.qualDesc,   color: C.textBody  }}>{description}</p>
-      </div>
-    </motion.div>
-  );
-}
-
-// ── ContactRow ────────────────────────────────────────────────
-function ContactRow({ icon, label, value, href, iconColor }: ContactRowProps) {
-  return (
-    <motion.div variants={fadeUp} style={s.contactRow}>
-      <div style={{ ...s.contactIconWrap, background: iconColor + "15", border: `1px solid ${iconColor}25` }}>
-        <span style={{ fontSize: 15, color: iconColor }}>{icon}</span>
-      </div>
-      <div>
-        <p style={{ ...s.contactLabel, color: C.textDim }}>{label}</p>
-        {href
-          ? <a href={href} target="_blank" rel="noreferrer" style={{ ...s.contactValue, color: C.textBody }}>{value}</a>
-          : <p style={{ ...s.contactValue, color: C.textBody }}>{value}</p>
-        }
-      </div>
-    </motion.div>
-  );
-}
-
-// ── Stat ─────────────────────────────────────────────────────
-function Stat({ n, l, color }: StatProps) {
-  return (
-    <motion.div
-      variants={fadeUp}
-      style={{ ...s.stat, border: `1px solid ${color}22`, background: `${color}08` }}
-      whileHover={{ scale: 1.04 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    >
-      <span style={{ ...s.statNumber, color }}>{n}</span>
-      <span style={{ ...s.statLabel,  color: C.textDim }}>{l}</span>
-    </motion.div>
-  );
-}
-
-// ── SectionHeader ─────────────────────────────────────────────
-function SectionHeader({ title, sub }: SectionHeaderProps) {
-  return (
-    <motion.div style={s.sectionHeader}
-      initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.36 }}>
-      {/* Gradient text title using the injected CSS class */}
-      <h2 className="grad-title" style={s.sectionTitle}>{title}</h2>
-      <p style={{ ...s.sectionSub, color: C.textMuted }}>{sub}</p>
-      <motion.div style={s.accentLine}
-        initial={{ scaleX: 0 }} animate={{ scaleX: 1 }}
-        transition={{ duration: 0.55, delay: 0.2, ease: "easeOut" as const }} />
-    </motion.div>
-  );
-}
-
-// ============================================================
-// SECTIONS
-// ============================================================
-
-function ProfileSection() {
-  const initials = PROFILE.name.split(" ").map((w: string) => w[0]).join("");
-  return (
-    <motion.div key="profile" variants={page} initial="hidden" animate="visible" exit="exit" style={s.section}>
-      {/* Avatar with glow */}
-      <motion.div style={s.avatarOuter}
-        initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.55, ease: "backOut" as const }}>
-        <div style={s.avatarGlow} />
-        {PROFILE.avatar
-          ? <img src={PROFILE.avatar} alt={PROFILE.name} style={s.avatarImg} />
-          : <div style={s.avatarInitials}>{initials}</div>
-        }
-      </motion.div>
-
-      {/* NAME — gradient text, very large and beautiful */}
-      <motion.h1 className="grad-text" style={s.profileName}
-        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
-        {PROFILE.name}
-      </motion.h1>
-
-      {/* Title with cyan accent */}
-      <motion.p style={{ ...s.profileTitle, color: C.cyan }}
-        initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        {PROFILE.title}
-        <span style={{ color: C.textDim, margin: "0 8px" }}>·</span>
-        <span style={{ color: C.violet }}>{PROFILE.subtitle}</span>
-      </motion.p>
-
-      {/* Location */}
-      <motion.p style={{ ...s.profileLocation, color: C.textMuted }}
-        initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.27 }}>
-        ◈ {PROFILE.location}
-      </motion.p>
-
-      {/* Bio — now much more readable */}
-      <motion.p style={{ ...s.profileBio, color: C.textBody }}
-        initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }}>
-        {PROFILE.bio}
-      </motion.p>
-
-      {/* Stats — each a different accent colour */}
-      <motion.div style={s.statsRow} variants={stagger} initial="hidden" animate="visible">
-        <Stat n={PROJECTS.length}       l="Projects"       color={C.indigo}  />
-        <Stat n={SKILLS.length}         l="Skills"         color={C.violet}  />
-        <Stat n={QUALIFICATIONS.length} l="Qualifications" color={C.cyan}    />
-      </motion.div>
-    </motion.div>
-  );
-}
-
-function SkillsSection() {
-  const categories = Array.from(new Set(SKILLS.map((sk: Skill) => sk.category)));
-  let gi = 0;
-  return (
-    <motion.div key="skills" variants={page} initial="hidden" animate="visible" exit="exit" style={s.section}>
-      <SectionHeader title="Skills" sub="Technical abilities by area" />
-      {categories.map((cat: string) => (
-        <motion.div key={cat} style={s.skillGroup}
-          variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-30px" }}>
-          <h3 style={{ ...s.skillGroupTitle, color: C.textDim }}>{cat}</h3>
-          {SKILLS.filter((sk: Skill) => sk.category === cat).map((skill: Skill) => {
-            const idx = gi++;
-            return <SkillBar key={skill.name} {...skill} index={idx} />;
-          })}
-        </motion.div>
-      ))}
-    </motion.div>
-  );
-}
-
-function QualificationsSection() {
-  return (
-    <motion.div key="qualifications" variants={page} initial="hidden" animate="visible" exit="exit" style={s.section}>
-      <SectionHeader title="Education" sub="Degrees and certifications" />
-      <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-        {QUALIFICATIONS.map((q: Qualification, i: number) => <QualCard key={i} {...q} index={i} />)}
-      </motion.div>
-    </motion.div>
-  );
-}
-
-function ProjectsSection() {
-  return (
-    <motion.div key="projects" variants={page} initial="hidden" animate="visible" exit="exit" style={s.section}>
-      <SectionHeader title="Projects" sub="Things I've built" />
-      <motion.div style={s.projectGrid} variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-        {PROJECTS.map((p: Project, i: number) => <ProjectCard key={i} {...p} index={i} />)}
-      </motion.div>
-    </motion.div>
-  );
-}
-
-function ContactSection() {
-  // Each row has its own icon colour
-  const rows = [
-    { icon: "✉",  label: "Email",    value: PROFILE.email,    href: `mailto:${PROFILE.email}`, iconColor: C.rose    },
-    { icon: "⌥",  label: "GitHub",   value: "View my GitHub", href: PROFILE.github,            iconColor: C.violet  },
-    { icon: "◈",  label: "LinkedIn", value: "View LinkedIn",  href: PROFILE.linkedin,          iconColor: C.indigo  },
-    { icon: "◎",  label: "Location", value: PROFILE.location, href: null,                      iconColor: C.cyan    },
-  ];
-  return (
-    <motion.div key="contact" variants={page} initial="hidden" animate="visible" exit="exit" style={s.section}>
-      <SectionHeader title="Contact" sub="Let's connect" />
-      <motion.div style={s.contactList} variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-        {rows.map((r) => <ContactRow key={r.label} {...r} />)}
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// ============================================================
-// ROOT COMPONENT — layout + responsive sidebar
-// ============================================================
-export default function Portfolio() {
-  const ww       = useWindowWidth();
+function Navbar() {
+  const [solid, setSolid] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const ww = useWindowWidth();
   const isMobile = ww < 768;
-  const [active,      setActive]      = useState("profile");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
-
 
   useEffect(() => {
-    document.body.style.overflow = (isMobile && sidebarOpen) ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
-  }, [isMobile, sidebarOpen]);
+    const fn = () => setSolid(window.scrollY > 60);
+    window.addEventListener("scroll", fn);
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
 
-  function handleNav(id: string) {
-    setActive(id);
-    if (isMobile) setSidebarOpen(false);
-  }
-
-  const sections: Record<string, React.ReactElement> = {
-    profile:        <ProfileSection />,
-    skills:         <SkillsSection />,
-    qualifications: <QualificationsSection />,
-    projects:       <ProjectsSection />,
-    contact:        <ContactSection />,
-  };
-
-  const initials = PROFILE.name.split(" ").map((w: string) => w[0]).join("");
-
-  // Nav icon colours — each item gets its own accent
-  const navColors: Record<string, string> = {
-    profile:        C.indigo,
-    skills:         C.violet,
-    qualifications: C.cyan,
-    projects:       C.emerald,
-    contact:        C.rose,
-  };
+  const links = [
+    { label: "Work", href: "#projects" },
+    { label: "Skills", href: "#skills" },
+    { label: "Timeline", href: "#timeline" },
+    { label: "Contact", href: "#contact" },
+  ];
 
   return (
     <>
-      <GlobalStyles />
-      <div style={s.root}>
+      <motion.nav
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: isMobile ? "0 20px" : "0 52px",
+          height: 64,
+          backgroundColor: solid ? "rgba(5,5,5,0.92)" : "transparent",
+          borderBottom: solid ? `1px solid ${BORDER}` : "none",
+          backdropFilter: solid ? "blur(20px)" : "none",
+          transition: "all 0.3s ease",
+        }}
+        initial={{ y: -80 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        {/* Logo */}
+        <a
+          href="#hero"
+          style={{
+            fontFamily: FONT_HEAD,
+            fontWeight: 800,
+            fontSize: 18,
+            letterSpacing: "-0.04em",
+          }}
+        >
+          <span className="g-name">{PROFILE.name.split(" ")[0]}</span>
+          <span style={{ color: A, marginLeft: 2 }}>.</span>
+        </a>
 
-        {/* ── Mobile top bar ── */}
-        {isMobile && (
-          <div style={s.topbar}>
-            <button style={s.hamburger} onClick={() => setSidebarOpen(true)} aria-label="Open menu">
-              <span style={s.hLine} />
-              <span style={s.hLine} />
-              <span style={s.hLine} />
-            </button>
-            <span className="grad-text" style={{ fontSize: 15, fontWeight: 800, letterSpacing: "-0.02em" }}>
-              {PROFILE.name.split(" ")[0]}
-            </span>
-            <div style={{ width: 44 }} />
+        {/* Desktop links */}
+        {!isMobile && (
+          <div style={{ display: "flex", gap: 36, alignItems: "center" }}>
+            {links.map((l) => (
+              <a
+                key={l.label}
+                href={l.href}
+                style={{
+                  fontSize: 13,
+                  color: TEXT2,
+                  fontWeight: 500,
+                  letterSpacing: "0.02em",
+                  transition: "color 0.2s",
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = A)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = TEXT2)}
+              >
+                {l.label}
+              </a>
+            ))}
+            <a
+              href={`mailto:${PROFILE.email}`}
+              style={{
+                fontSize: 13,
+                fontWeight: 600,
+                padding: "8px 18px",
+                border: `1px solid ${A}`,
+                borderRadius: 6,
+                color: A,
+                letterSpacing: "0.04em",
+                transition: "all 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = A;
+                (e.currentTarget as HTMLElement).style.color = BG;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background =
+                  "transparent";
+                (e.currentTarget as HTMLElement).style.color = A;
+              }}
+            >
+              Hire Me
+            </a>
           </div>
         )}
 
-        <div style={{ display: "flex", flex: 1, position: "relative" }}>
-
-          {/* Overlay */}
-          <AnimatePresence>
-            {isMobile && sidebarOpen && (
-              <motion.div style={s.overlay}
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                onClick={() => setSidebarOpen(false)} />
-            )}
-          </AnimatePresence>
-
-          {/* ── Sidebar ── */}
-          <AnimatePresence>
-            {(!isMobile || sidebarOpen) && (
-              <motion.aside
+        {/* Mobile hamburger */}
+        {isMobile && (
+          <button
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              gap: 5,
+              padding: 4,
+            }}
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
+            {[0, 1, 2].map((i) => (
+              <motion.span
+                key={i}
                 style={{
-                  ...s.sidebar,
-                  position: isMobile ? "fixed" : "sticky",
-                  top: 0, left: 0, height: "100vh",
-                  zIndex: isMobile ? 200 : 10,
+                  display: "block",
+                  width: 22,
+                  height: 2,
+                  background: A,
+                  borderRadius: 99,
                 }}
-                initial={isMobile ? { x: -260 } : false}
-                animate={{ x: 0 }}
-                exit={{ x: -260 }}
-                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                animate={{
+                  rotate:
+                    menuOpen && i === 0 ? 45 : menuOpen && i === 2 ? -45 : 0,
+                  y: menuOpen && i === 0 ? 7 : menuOpen && i === 2 ? -7 : 0,
+                  opacity: menuOpen && i === 1 ? 0 : 1,
+                }}
+              />
+            ))}
+          </button>
+        )}
+      </motion.nav>
+
+      {/* Mobile menu overlay */}
+      <AnimatePresence>
+        {isMobile && menuOpen && (
+          <motion.div
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 99,
+              background: "rgba(5,5,5,0.98)",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 40,
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {links.map((l, i) => (
+              <motion.a
+                key={l.label}
+                href={l.href}
+                onClick={() => setMenuOpen(false)}
+                style={{
+                  fontSize: "clamp(28px,8vw,48px)",
+                  fontFamily: FONT_HEAD,
+                  fontWeight: 800,
+                  color: TEXT,
+                  letterSpacing: "-0.03em",
+                }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+                onMouseEnter={(e) => (e.currentTarget.style.color = A)}
+                onMouseLeave={(e) => (e.currentTarget.style.color = TEXT)}
               >
-                {/* Close button on mobile */}
-                {isMobile && (
-                  <button style={s.closeBtn} onClick={() => setSidebarOpen(false)}>✕</button>
-                )}
-
-                {/* Brand */}
-                <div style={s.brand}>
-                  <div style={s.brandAvatar}>
-                    {PROFILE.avatar
-                      ? <img src={PROFILE.avatar} alt="avatar" style={{ width: "100%", height: "100%", objectFit: "cover" as const }} />
-                      : <span style={{ fontSize: 13, fontWeight: 800, color: "#fff" }}>{initials}</span>
-                    }
-                  </div>
-                  <div>
-                    <p className="grad-text" style={{ ...s.brandName }}>{PROFILE.name.split(" ")[0]}</p>
-                    <p style={{ ...s.brandRole, color: C.textMuted }}>{PROFILE.title}</p>
-                  </div>
-                </div>
-
-                <div style={s.divider} />
-
-                {/* Nav */}
-                <nav style={s.nav}>
-                  {NAV_ITEMS.map((item: NavItem) => {
-                    const isActive = active === item.id;
-                    const col = navColors[item.id] ?? C.indigo;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => handleNav(item.id)}
-                        style={{
-                          ...s.navBtn,
-                          color: isActive ? C.textPrimary : C.textDim,
-                        }}
-                      >
-                        {isActive && (
-                          <motion.div layoutId="pill"
-                            style={{ ...s.navPill, background: `${col}14`, border: `1px solid ${col}30` }}
-                            transition={{ type: "spring", stiffness: 380, damping: 32 }} />
-                        )}
-                        <span style={{ ...s.navIcon, color: isActive ? col : C.textDim + "88" }}>
-                          {item.emoji}
-                        </span>
-                        <span style={{ position: "relative", zIndex: 1, fontSize: 13, fontWeight: isActive ? 600 : 400 }}>
-                          {item.label}
-                        </span>
-                        {/* Active dot on right */}
-                        {isActive && (
-                          <motion.div
-                            style={{ marginLeft: "auto", width: 5, height: 5, borderRadius: "50%", background: col, position: "relative", zIndex: 1, boxShadow: `0 0 6px ${col}` }}
-                            layoutId="dot"
-                          />
-                        )}
-                      </button>
-                    );
-                  })}
-                </nav>
-
-                {/* Footer */}
-                <p style={{ ...s.sidebarFooter, color: C.textDim }}>Cloud Computing · 2026</p>
-              </motion.aside>
-            )}
-          </AnimatePresence>
-
-          {/* ── Main content ── */}
-          <main style={{
-            ...s.main,
-            padding: isMobile ? "24px 20px 60px" : "52px 56px 80px",
-          }}>
-            <AnimatePresence mode="wait">
-              {sections[active]}
-            </AnimatePresence>
-          </main>
-        </div>
-      </div>
+                {l.label}
+              </motion.a>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 }
 
 // ============================================================
-// STYLES
+// HERO SECTION — full screen, portrait + animated text
 // ============================================================
-const s: Record<string, React.CSSProperties> = {
-  root:    { display: "flex", flexDirection: "column", minHeight: "100vh", position: "relative", zIndex: 1, fontFamily: "'Segoe UI', system-ui, sans-serif" },
+function HeroSection() {
+  const [photoHovered, setPhotoHovered] = useState(false);
+  const ww = useWindowWidth();
+  const isMobile = ww < 768;
+  const initials = PROFILE.name
+    .split(" ")
+    .map((w: string) => w[0])
+    .join("");
 
-  // Mobile topbar
-  topbar:  { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px", height: 56, backgroundColor: "rgba(6,6,18,0.95)", borderBottom: `1px solid ${C.border}`, position: "sticky", top: 0, zIndex: 100, backdropFilter: "blur(16px)" },
-  hamburger: { width: 44, height: 44, background: "transparent", border: "none", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 5, padding: 0, borderRadius: 10 },
-  hLine:   { display: "block", width: 22, height: 2, backgroundColor: C.indigo, borderRadius: 99 },
-  closeBtn:{ position: "absolute", top: 16, right: 16, width: 30, height: 30, background: "rgba(255,255,255,0.06)", border: `1px solid ${C.border}`, borderRadius: "50%", color: C.textMuted, fontSize: 13, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" },
-  overlay: { position: "fixed", inset: 0, backgroundColor: "rgba(0,0,0,0.7)", zIndex: 150, backdropFilter: "blur(3px)" },
+    
+  return (
+    <section
+      id="hero"
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        padding: isMobile ? "100px 24px 60px" : "0 52px",
+        position: "relative",
+      }}
+    >
+    {/* Background video */}
+<video
+  autoPlay muted loop playsInline
+  style={{
+    position:  "absolute",
+    inset:     0,
+    width:     "100%",
+    height:    "100%",
+    objectFit: "cover",
+    zIndex:    0,
+    opacity:   0.35,  // ← raise to 0.3 for more visible, lower to 0.08 for subtle
+  }}>
+  <source src="/images/hero-bg.mp4" type="video/mp4" />
+</video>
 
-  // Sidebar
-  sidebar: { width: 230, minWidth: 230, background: `linear-gradient(180deg, rgba(12,12,30,0.99) 0%, rgba(8,8,20,0.99) 100%)`, borderRight: `1px solid ${C.border}`, display: "flex", flexDirection: "column", padding: "26px 0 20px", overflowY: "auto" },
-  brand:   { display: "flex", alignItems: "center", gap: 10, padding: "0 18px 20px" },
-  brandAvatar: { width: 38, height: 38, borderRadius: "50%", background: `linear-gradient(135deg, ${C.indigo}, ${C.cyan})`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, overflow: "hidden" },
-  brandName: { margin: 0, fontSize: 14, fontWeight: 800, letterSpacing: "-0.02em" },
-  brandRole: { margin: 0, fontSize: 11 },
-  divider: { height: 1, background: C.border, margin: "0 0 10px" },
-  nav:     { display: "flex", flexDirection: "column", gap: 3, padding: "0 10px", flex: 1 },
-  navBtn:  { display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", borderRadius: 10, border: "none", cursor: "pointer", background: "transparent", textAlign: "left" as const, width: "100%", position: "relative", transition: "color 0.15s" },
-  navPill: { position: "absolute", inset: 0, borderRadius: 10 },
-  navIcon: { fontSize: 13, position: "relative", zIndex: 1, transition: "color 0.15s" },
-  sidebarFooter: { fontSize: 10, textAlign: "center" as const, padding: "14px 0 0", borderTop: `1px solid ${C.border}`, letterSpacing: "0.05em" },
 
-  // Main
-  main:    { flex: 1, overflowY: "auto", maxWidth: 900, width: "100%" },
-  section: { paddingBottom: 64 },
+      {/* Background grid lines */}
+      <div
+        style={{
+          position: "absolute",
+          inset: -2,
+          backgroundImage: `linear-gradient(${BORDER} 1px, transparent 1px), linear-gradient(90deg, ${BORDER} 1px, transparent 1px)`,
+          backgroundSize: "60px 60px",
+          borderRadius:32,
+          zIndex: 0,
+        }}
+      />
 
-  // Section header
-  sectionHeader: { marginBottom: 32 },
-  sectionTitle:  { fontSize: "clamp(22px, 4vw, 30px)", fontWeight: 800, margin: "0 0 5px", letterSpacing: "-0.03em" },
-  sectionSub:    { fontSize: 13, margin: "0 0 14px" },
-  accentLine:    { height: 2, width: 44, background: C.gradAccent, borderRadius: 99, transformOrigin: "left" },
+      <div
+        style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          maxWidth: 1200,
+          margin: "0 auto",
+          gap: isMobile ? 48 : 0,
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        {/* LEFT — text content */}
+        <motion.div
+          style={{ flex: 1, maxWidth: 600 }}
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* Label */}
+          <motion.div
+            variants={fadeUp}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              marginBottom: 24,
+            }}
+          >
+            <span
+              style={{ width: 32, height: 2, background: A, display: "block" }}
+            />
+            <span
+              style={{
+                fontSize: 12,
+                color: A,
+                fontWeight: 600,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase" as const,
+              }}
+            >
+            
+            </span>
+          </motion.div>
 
-  // Profile
-  avatarOuter:    { position: "relative", width: 108, height: 108, marginBottom: 24 },
-  avatarGlow:     { position: "absolute", inset: -14, borderRadius: "50%", background: `radial-gradient(circle, rgba(129,140,248,0.24) 0%, rgba(192,132,252,0.1) 50%, transparent 70%)` },
-  avatarImg:      { width: 108, height: 108, borderRadius: "50%", objectFit: "cover" as const, border: `2px solid rgba(129,140,248,0.4)`, position: "relative", zIndex: 1, display: "block" },
-  avatarInitials: { width: 108, height: 108, borderRadius: "50%", background: `linear-gradient(135deg, ${C.indigo}, ${C.violet}, ${C.cyan})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 34, fontWeight: 800, color: "#fff", position: "relative", zIndex: 1, border: `2px solid rgba(129,140,248,0.35)` },
-  profileName:    { fontSize: "clamp(30px, 7vw, 48px)", fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.04em", lineHeight: 1.08 },
-  profileTitle:   { fontSize: "clamp(13px, 2vw, 15px)", margin: "0 0 6px", fontWeight: 500 },
-  profileLocation:{ fontSize: 12, margin: "0 0 18px" },
-  profileBio:     { fontSize: "clamp(13px, 1.8vw, 15px)", lineHeight: 1.8, maxWidth: 500, margin: "0 0 30px" },
-  statsRow:       { display: "flex", gap: 12, flexWrap: "wrap" as const },
-  stat:           { borderRadius: 14, padding: "15px 22px", display: "flex", flexDirection: "column", alignItems: "center", cursor: "default" },
-  statNumber:     { fontSize: "clamp(24px, 4vw, 30px)", fontWeight: 800, lineHeight: 1, marginBottom: 5 },
-  statLabel:      { fontSize: 10, letterSpacing: "0.06em", textTransform: "uppercase" as const },
+          {/* NAME — huge gradient */}
+          <motion.h1
+            variants={fadeUp}
+            style={{
+              fontFamily: FONT_HEAD,
+              fontSize: "clamp(44px, 9vw, 88px)",
+              fontWeight: 800,
+              lineHeight: 1.0,
+              letterSpacing: "-0.05em",
+              margin: "0 0 20px",
+            }}
+          >
+            <span className="g-name">{PROFILE.name.split(" ")[0]}</span>
+            <br />
+            <span style={{ color: TEXT }}>
+              {PROFILE.name.split(" ").slice(1).join(" ")}
+            </span>
+          </motion.h1>
 
-  // Skills
-  skillGroup:      { marginBottom: 34 },
-  skillGroupTitle: { fontSize: 10, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" as const, marginBottom: 14 },
-  skillRow:        { display: "flex", alignItems: "center", gap: 10, marginBottom: 13 },
-  skillMeta:       { display: "flex", alignItems: "center", gap: 6, width: 175, flexShrink: 0 },
-  skillName:       { fontSize: 13, fontWeight: 500 },
-  badge:           { fontSize: 9, padding: "2px 7px", borderRadius: 99, fontWeight: 700, letterSpacing: "0.05em", textTransform: "uppercase" as const, whiteSpace: "nowrap" as const },
-  barTrack:        { flex: 1, height: 5, background: "rgba(255,255,255,0.05)", borderRadius: 99, overflow: "hidden" },
-  barFill:         { height: "100%", borderRadius: 99 },
-  levelLabel:      { fontSize: 10, width: 28, textAlign: "right" as const, flexShrink: 0 },
+          {/* Title */}
+          <motion.p
+            variants={fadeUp}
+            style={{
+              fontSize: "clamp(15px, 2.5vw, 20px)",
+              color: TEXT2,
+              lineHeight: 1.6,
+              maxWidth: 480,
+              margin: "0 0 40px",
+            }}
+          >
+            {PROFILE.bio}
+          </motion.p>
 
-  // Qualifications
-  qualCard:    { display: "flex", background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 14, marginBottom: 14, overflow: "hidden", transition: "border-color 0.2s" },
-  qualAccent:  { width: 3, flexShrink: 0 },
-  qualContent: { padding: "18px 20px", flex: 1 },
-  qualHeader:  { display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 4, gap: 8 },
-  qualDegree:  { fontSize: "clamp(13px, 2vw, 15px)", fontWeight: 700, margin: 0 },
-  qualYear:    { fontSize: 11, fontWeight: 600, whiteSpace: "nowrap" as const },
-  qualSchool:  { fontSize: 13, margin: "3px 0 7px" },
-  qualDesc:    { fontSize: 12, lineHeight: 1.65, margin: 0 },
+          {/* CTAs */}
+          <motion.div
+            variants={fadeUp}
+            style={{ display: "flex", gap: 16, flexWrap: "wrap" as const }}
+          >
+            <a
+              href="#projects"
+              style={{
+                padding: "14px 32px",
+                background: A,
+                color: BG,
+                borderRadius: 8,
+                fontWeight: 700,
+                fontSize: 14,
+                letterSpacing: "0.04em",
+                fontFamily: FONT_HEAD,
+              }}
+            >
+              View My Work
+            </a>
+            <a
+              href={`mailto:${PROFILE.email}`}
+              style={{
+                padding: "14px 32px",
+                border: `1px solid rgba(12, 165, 165, 0.5)`,
+                color: TEXT,
+                borderRadius: 8,
+                fontWeight: 500,
+                fontSize: 14,
+                letterSpacing: "0.02em",
+              }}
+            >
+              Get in Touch
+            </a>
+          </motion.div>
 
-  // Projects
-  projectGrid:    { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(255px,1fr))", gap: 16 },
-  card:           { borderRadius: 16, overflow: "hidden", border: `1px solid ${C.border}`, transition: "border-color 0.2s, box-shadow 0.2s, background 0.2s" },
-  cardImg:        { height: 150, position: "relative", overflow: "hidden" },
-  cardImgPlaceholder: { width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", background: `linear-gradient(135deg, ${C.bg2}, ${C.bg3})` },
-  featuredBadge:  { position: "absolute", top: 10, right: 10, background: `linear-gradient(90deg, ${C.violet}, ${C.indigo})`, color: "#fff", fontSize: 9, padding: "3px 9px", borderRadius: 99, fontWeight: 700, letterSpacing: "0.06em" },
-  cardBody:       { padding: "16px" },
-  cardTitle:      { fontSize: 14, fontWeight: 700, margin: "0 0 6px" },
-  cardDesc:       { fontSize: 12, lineHeight: 1.65, margin: "0 0 12px" },
-  techList:       { display: "flex", flexWrap: "wrap" as const, gap: 5, marginBottom: 12 },
-  techBadge:      { fontSize: 10, padding: "3px 8px", borderRadius: 99, background: `${C.indigo}12`, color: C.indigo, border: `1px solid ${C.indigo}20`, fontWeight: 600 },
-  cardLink:       { fontSize: 12, color: C.cyan, fontWeight: 600, textDecoration: "none" as const },
+          {/* Stats row */}
+          <motion.div
+            variants={fadeUp}
+            style={{
+              display: "flex",
+              gap: 32,
+              marginTop: 56,
+              paddingTop: 32,
+              borderTop: `1px solid ${BORDER}`,
+            }}
+          >
+            {[
+              { n: PROJECTS.length, l: "Projects Built" },
+              { n: SKILLS.length, l: "Skills" },
+              { n: QUALIFICATIONS.length, l: "Qualifications" },
+            ].map(({ n, l }) => (
+              <div key={l}>
+                <p
+                  style={{
+                    fontFamily: FONT_HEAD,
+                    fontSize: 28,
+                    fontWeight: 800,
+                    color: A,
+                    lineHeight: 1,
+                    marginBottom: 4,
+                  }}
+                >
+                  {n}+
+                </p>
+                <p
+                  style={{
+                    fontSize: 11,
+                    color: TEXT3,
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase" as const,
+                  }}
+                >
+                  {l}
+                </p>
+              </div>
+            ))}
+          </motion.div>
+        </motion.div>
 
-  // Contact
-  contactList:    { display: "flex", flexDirection: "column", gap: 11, maxWidth: 440 },
-  contactRow:     { display: "flex", alignItems: "center", gap: 14, background: C.bgCard, border: `1px solid ${C.border}`, borderRadius: 13, padding: "14px 18px" },
-  contactIconWrap:{ width: 38, height: 38, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
-  contactLabel:   { fontSize: 10, margin: "0 0 2px", letterSpacing: "0.08em", textTransform: "uppercase" as const },
-  contactValue:   { fontSize: 13, margin: 0, textDecoration: "none" as const },
-};
+        {/* RIGHT — portrait photo with geometric overlay */}
+        {!isMobile && (
+          <motion.div
+            style={{ position: "relative", width: 380, flexShrink: 0 }}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            {/* ═══════════════════════════════════════════════════
+                📸 HERO PORTRAIT PHOTO
+                
+                Where to put your photo:
+                  my-portfolio/
+                    public/
+                      images/
+                        hero.jpg   ← your photo here
+                
+                Ideal specs:
+                  • Portrait/vertical orientation
+                  • Good lighting, ideally against dark background
+                  • Min 400×500 pixels, JPG or PNG
+                  • Transparent PNG works great too
+                
+                The geometric grid appears on mouse hover.
+                A neon glow border frames the photo.
+            ════════════════════════════════════════════════════ */}
+            <div
+              style={{
+                position: "relative",
+                width: 340,
+                height: 440,
+                cursor: "none",
+              }}
+              onMouseEnter={() => setPhotoHovered(true)}
+              onMouseLeave={() => setPhotoHovered(false)}
+            >
+              {/* Neon glow frame */}
+              <div
+                style={{
+                  position: "absolute",
+                  inset: -2,
+                  borderRadius: 40,
+                  background: `linear-gradient(135deg, ${A}60, ${A2}40)`,
+                  zIndex: 0,
+                }}
+              />
+
+                     
+              {/* Photo */}
+              <div
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: 45,
+                  overflow: "hidden",
+                  zIndex: 1,
+                  background: BG3,
+                }}
+              >
+                <img
+                  src="/images/hero.jpg"
+                  alt={PROFILE.name}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover" as const,
+                    display: "block",
+                  }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
+                       
+
+                 
+                {/* Initials fallback (shows behind the image) */}
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    zIndex: -1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: `linear-gradient(135deg, ${BG2}, ${BG3})`,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: FONT_HEAD,
+                      fontSize: 80,
+                      fontWeight: 800,
+                      color: `${A}30`,
+                    }}
+                  >
+                    {initials}
+                  </span>
+                </div>
+
+                {/* Hover geometric grid overlay */}
+                <motion.div
+                  style={{ position: "absolute", inset: 0, zIndex: 2 }}
+                  animate={{ opacity: photoHovered ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <svg
+                    width="100%"
+                    height="100%"
+                    style={{ position: "absolute", inset: 0 }}
+                  >
+                    {/* Vertical lines */}
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <motion.line
+                        key={`v${i}`}
+                        x1={`${(i * 100) / 6}%`}
+                        y1="0"
+                        x2={`${(i * 100) / 6}%`}
+                        y2="100%"
+                        stroke={A}
+                        strokeWidth="0.6"
+                        strokeOpacity="0.5"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: photoHovered ? 1 : 0 }}
+                        transition={{ duration: 0.4, delay: i * 0.05 }}
+                      />
+                    ))}
+                    {/* Horizontal lines */}
+                    {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                      <motion.line
+                        key={`h${i}`}
+                        x1="0"
+                        y1={`${(i * 100) / 8}%`}
+                        x2="100%"
+                        y2={`${(i * 100) / 8}%`}
+                        stroke={A}
+                        strokeWidth="0.6"
+                        strokeOpacity="0.5"
+                        initial={{ pathLength: 0 }}
+                        animate={{ pathLength: photoHovered ? 1 : 0 }}
+                        transition={{ duration: 0.4, delay: i * 0.04 }}
+                      />
+                    ))}
+                    {/* Corner brackets */}
+                    <motion.path
+                      d="M 10 30 L 10 10 L 30 10"
+                      stroke={A}
+                      strokeWidth="2"
+                      fill="none"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: photoHovered ? 1 : 0 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                    <motion.path
+                      d="M 90% 10 L calc(100% - 10px) 10 L calc(100% - 10px) 30"
+                      stroke={A}
+                      strokeWidth="2"
+                      fill="none"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: photoHovered ? 1 : 0 }}
+                      transition={{ duration: 0.3, delay: 0.1 }}
+                    />
+                    <motion.path
+                      d="M 10 70% L 10 calc(100% - 10px) L 30 calc(100% - 10px)"
+                      stroke={A}
+                      strokeWidth="2"
+                      fill="none"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: photoHovered ? 1 : 0 }}
+                      transition={{ duration: 0.3, delay: 0.05 }}
+                    />
+                  </svg>
+                  {/* Dark overlay for contrast */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background: "rgba(0,0,0,0.35)",
+                    }}
+                  />
+                  {/* Hover label */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      bottom: 20,
+                      left: 20,
+                      fontSize: 11,
+                      color: A,
+                      fontWeight: 600,
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase" as const,
+                    }}
+                  >
+                    {PROFILE.title}
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Floating accent card — top right */}
+              <motion.div
+                style={{
+                  position: "absolute",
+                  top: -16,
+                  right: -20,
+                  background: BG3,
+                  border: `1px solid ${BORDER}`,
+                  borderRadius: 10,
+                  padding: "10px 16px",
+                  zIndex: 10,
+                }}
+                animate={{ y: [0, -6, 0] }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 10,
+                    color: A,
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  AVAILABLE FOR
+                </p>
+                <p style={{ fontSize: 12, color: TEXT, fontWeight: 600 }}>
+                  Internships &amp; Projects
+                </p>
+              </motion.div>
+
+              {/* Floating accent card — bottom left */}
+              <motion.div
+                style={{
+                  position: "absolute",
+                  bottom: -16,
+                  left: -20,
+                  background: BG3,
+                  border: `1px solid ${BORDER}`,
+                  borderRadius: 10,
+                  padding: "10px 16px",
+                  zIndex: 10,
+                }}
+                animate={{ y: [0, 6, 0] }}
+                transition={{
+                  duration: 3.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: 0.5,
+                }}
+              >
+                <p
+                  style={{
+                    fontSize: 10,
+                    color: A2,
+                    fontWeight: 700,
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  LOCATION
+                </p>
+                <p style={{ fontSize: 12, color: TEXT, fontWeight: 600 }}>
+                  📍 {PROFILE.location}
+                </p>
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        style={{
+          position: "absolute",
+          bottom: 32,
+          left: "50%",
+          transform: "translateX(-50%)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 8,
+        }}
+        animate={{ y: [0, 8, 0] }}
+        transition={{ duration: 2, repeat: Infinity }}
+      >
+        <span style={{ fontSize: 10, color: TEXT3, letterSpacing: "0.1em" }}>
+          SCROLL
+        </span>
+        <div
+          style={{
+            width: 1,
+            height: 40,
+            background: `linear-gradient(${A}, transparent)`,
+          }}
+        />
+      </motion.div>
+    </section>
+  );
+}
+
+// ============================================================
+// MANIFESTO SECTION — large scroll-reveal typography
+// ============================================================
+function ManifestoSection() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Each word is defined here with whether it's accent coloured or not
+  // isAccent: true = glows in neon green, false = plain white
+  const words: { text: string; isAccent: boolean }[] = [
+    { text: "Building",      isAccent: false },
+    { text: "tomorrow's",    isAccent: false },
+    { text: "cloud",         isAccent: true  },
+    { text: "infrastructure,",isAccent: true  },
+    { text: "one",           isAccent: false },
+    { text: "deploy",        isAccent: false },
+    { text: "at",            isAccent: false },
+    { text: "a",             isAccent: false },
+    { text: "time",          isAccent: false },
+    { text: "—",             isAccent: false },
+    { text: "bridging",      isAccent: false },
+    { text: "the",           isAccent: false },
+    { text: "gap",           isAccent: false },
+    { text: "between",       isAccent: false },
+    { text: "technical",     isAccent: true  },
+    { text: "precision",     isAccent: true  },
+    { text: "and",           isAccent: false },
+    { text: "real‑world",    isAccent: false },
+    { text: "impact.",       isAccent: false },
+  ];
+
+  // Each word gets a different starting position so they fly in
+  // from all directions and "collide" into place
+  const getStart = (i: number) => {
+    const directions = [
+      { x: -400, y: -60,  rotate: -15 },  // from far left
+      { x:  400, y:  60,  rotate:  15 },  // from far right
+      { x: -250, y: -150, rotate: -10 },  // top left diagonal
+      { x:  250, y:  150, rotate:  10 },  // bottom right diagonal
+      { x:    0, y: -300, rotate:  -6 },  // straight down from top
+      { x:    0, y:  300, rotate:   6 },  // straight up from bottom
+      { x: -350, y:  100, rotate: -12 },  // left
+      { x:  350, y: -100, rotate:  12 },  // right
+    ];
+    return directions[i % directions.length];
+  };
+
+  return (
+    <section
+      ref={ref}
+      style={{
+        minHeight:      "80vh",
+        display:        "flex",
+        flexDirection:  "column",
+        alignItems:     "center",
+        justifyContent: "center",
+        padding:        "80px 32px",
+        background:     "#0a0a0a",
+        borderTop:      `1px solid rgba(0,255,135,0.1)`,
+        borderBottom:   `1px solid rgba(0,255,135,0.1)`,
+        overflow:       "hidden",   // clips words flying in from edges
+        position:       "relative",
+      }}
+    >
+      {/* Label that slides in first */}
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        style={{
+          fontSize:      12,
+          color:         A,
+          fontWeight:    700,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase" as const,
+          marginBottom:  36,
+        }}
+      >
+        My Mission
+      </motion.p>
+
+      {/* Word collision container */}
+      <div
+        style={{
+          maxWidth:   900,
+          textAlign:  "center" as const,
+          lineHeight: 1.3,
+          fontFamily: FONT_HEAD,
+          fontSize:   "clamp(26px, 5vw, 58px)",
+          fontWeight: 800,
+          letterSpacing: "-0.03em",
+        }}
+      >
+        {words.map((word, i) => {
+          const start = getStart(i);
+          return (
+            <motion.span
+              key={i}
+              initial={{
+                opacity: 0,
+                x:       start.x,
+                y:       start.y,
+                rotate:  start.rotate,
+                filter:  "blur(6px)",
+              }}
+              whileInView={{
+                opacity: 1,
+                x:       0,
+                y:       0,
+                rotate:  0,
+                filter:  "blur(0px)",
+              }}
+              // once: true = animation only plays once as you scroll past
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{
+                // spring makes it overshoot slightly = collision feel
+                type:      "spring",
+                stiffness: 120,
+                damping:   11,
+                delay:     i * 0.055,  // each word is 55ms after previous
+                opacity:   { duration: 0.25, delay: i * 0.055 },
+                filter:    { duration: 0.3,  delay: i * 0.055 },
+              }}
+              style={{
+                display:     "inline-block",
+                marginRight: "0.28em",
+                // Accent words get the neon gradient colour
+                ...(word.isAccent
+                  ? {
+                      background:             `linear-gradient(90deg, ${A}, ${A2})`,
+                      WebkitBackgroundClip:   "text",
+                      WebkitTextFillColor:    "transparent",
+                      backgroundClip:         "text",
+                    }
+                  : {
+                      color: "#f0f0f0",
+                    }),
+              }}
+            >
+              {word.text}
+            </motion.span>
+          );
+        })}
+      </div>
+
+      {/* Decorative line that draws itself after words land */}
+      <motion.div
+        initial={{ scaleX: 0, opacity: 0 }}
+        whileInView={{ scaleX: 1, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1, delay: words.length * 0.055 + 0.3 }}
+        style={{
+          marginTop:       48,
+          height:          2,
+          width:           80,
+          background:      `linear-gradient(90deg, ${A}, ${A2})`,
+          borderRadius:    99,
+          transformOrigin: "center",
+        }}
+      />
+    </section>
+  );
+}
+// ============================================================
+// PROJECTS SECTION — asymmetric grid
+// ============================================================
+function ProjectsSection() {
+  const [filter, setFilter] = useState("All");
+  const filters = [
+    "All",
+    ...Array.from(new Set(PROJECTS.map((p: Project) => p.tech[0]))),
+  ];
+  const filtered =
+    filter === "All"
+      ? PROJECTS
+      : PROJECTS.filter((p: Project) => p.tech.includes(filter));
+
+  return (
+    <section
+      id="projects"
+      style={{ padding: "120px 52px", maxWidth: 1200, margin: "0 auto" }}
+    >
+      <motion.div
+        variants={stagger}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+      >
+        <motion.div
+          variants={fadeUp}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            marginBottom: 48,
+            flexWrap: "wrap" as const,
+            gap: 20,
+          }}
+        >
+          <div>
+            <p
+              style={{
+                fontSize: 11,
+                color: A,
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                marginBottom: 8,
+                textTransform: "uppercase" as const,
+              }}
+            >
+              Selected Work
+            </p>
+            <h2
+              style={{
+                fontFamily: FONT_HEAD,
+                fontSize: "clamp(32px, 5vw, 52px)",
+                fontWeight: 800,
+                letterSpacing: "-0.04em",
+                color: TEXT,
+              }}
+            >
+              Projects
+            </h2>
+          </div>
+
+          {/* Filter tabs */}
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" as const }}>
+            {filters.slice(0, 5).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                style={{
+                  padding: "8px 16px",
+                  borderRadius: 6,
+                  border: `1px solid ${filter === f ? A : BORDER}`,
+                  background: filter === f ? `${A}15` : "transparent",
+                  color: filter === f ? A : TEXT2,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                }}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Project grid */}
+        <motion.div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+            gap: 20,
+          }}
+          layout
+        >
+          {filtered.map((p: Project, i: number) => (
+            <ProjectCard key={p.title} project={p} featured={i === 0} />
+          ))}
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+function ProjectCard({
+  project,
+  featured,
+}: {
+  project: Project;
+  featured: boolean;
+}) {
+  const [hov, setHov] = useState(false);
+  const { title, description, tech, image, link } = project;
+
+  return (
+    <motion.div
+      layout
+      variants={fadeUp}
+      style={{
+        borderRadius: 14,
+        overflow: "hidden",
+        border: `1px solid ${hov ? BORDERH : BORDER}`,
+        background: hov ? `rgba(0,255,135,0.04)` : BG2,
+        gridColumn: featured ? "span 2" : "span 1",
+        transition: "all 0.25s",
+        boxShadow: hov ? `0 0 40px rgba(0,255,135,0.08)` : "none",
+      }}
+      whileHover={{ y: -5 }}
+      transition={{ type: "spring", stiffness: 280, damping: 22 }}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+    >
+      {/* ═══════════════════════════════════════════
+          📸 PROJECT SCREENSHOT
+          
+          Add your screenshot to: public/images/project1.jpg
+          Then in portfolio.ts set:  image: "/images/project1.jpg"
+          
+          Recommended: 16:9 ratio, min 800×450px
+      ════════════════════════════════════════════ */}
+      <div
+        style={{
+          height: featured ? 280 : 200,
+          position: "relative",
+          overflow: "hidden",
+          background: BG3,
+        }}
+      >
+        {image ? (
+          <img
+            src={image}
+            alt={title}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover" as const,
+              transition: "transform 0.4s ease",
+              transform: hov ? "scale(1.04)" : "scale(1)",
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: `linear-gradient(135deg, ${BG2}, ${BG3})`,
+            }}
+          >
+            <span
+              style={{ fontFamily: FONT_HEAD, fontSize: 48, color: `${A}18` }}
+            >
+              ◉
+            </span>
+          </div>
+        )}
+
+        {/* Hover overlay with metadata */}
+        <motion.div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "rgba(0,0,0,0.75)",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-end",
+            padding: 20,
+          }}
+          animate={{ opacity: hov ? 1 : 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: 6,
+              flexWrap: "wrap" as const,
+              marginBottom: 8,
+            }}
+          >
+            {tech.map((t: string) => (
+              <span
+                key={t}
+                style={{
+                  fontSize: 10,
+                  padding: "3px 8px",
+                  borderRadius: 4,
+                  background: `${A}20`,
+                  color: A,
+                  fontWeight: 600,
+                  border: `1px solid ${A}30`,
+                }}
+              >
+                {t}
+              </span>
+            ))}
+          </div>
+          {link && link !== "#" && (
+            <a
+              href={link}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                fontSize: 12,
+                color: A,
+                fontWeight: 700,
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              View Live Project →
+            </a>
+          )}
+        </motion.div>
+
+        {featured && (
+          <span
+            style={{
+              position: "absolute",
+              top: 14,
+              right: 14,
+              fontSize: 10,
+              padding: "4px 10px",
+              borderRadius: 4,
+              background: A,
+              color: BG,
+              fontWeight: 800,
+              letterSpacing: "0.06em",
+            }}
+          >
+            FEATURED
+          </span>
+        )}
+      </div>
+
+      {/* Card body */}
+      <div style={{ padding: "20px 22px" }}>
+        <h3
+          style={{
+            fontFamily: FONT_HEAD,
+            fontSize: 17,
+            fontWeight: 700,
+            color: TEXT,
+            margin: "0 0 8px",
+            letterSpacing: "-0.02em",
+          }}
+        >
+          {title}
+        </h3>
+        <p style={{ fontSize: 13, color: TEXT2, lineHeight: 1.65, margin: 0 }}>
+          {description}
+        </p>
+      </div>
+    </motion.div>
+  );
+}
+
+// ============================================================
+// SKILLS MATRIX — interactive hover grid
+// ============================================================
+function SkillsMatrix() {
+  const [active, setActive] = useState<Skill | null>(null);
+  const categories = Array.from(new Set(SKILLS.map((s: Skill) => s.category)));
+  const colors: Record<string, string> = {
+    Frontend: A,
+    Backend: A2,
+    Tools: "#f59e0b",
+    Cloud: "#a78bfa",
+  };
+
+  return (
+    <section
+      id="skills"
+      style={{
+        padding: "120px 52px",
+        background: BG2,
+        borderTop: `1px solid ${BORDER}`,
+      }}
+    >
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <motion.div variants={fadeUp} style={{ marginBottom: 64 }}>
+            <p
+              style={{
+                fontSize: 11,
+                color: A,
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                marginBottom: 8,
+                textTransform: "uppercase" as const,
+              }}
+            >
+              What I work with
+            </p>
+            <h2
+              style={{
+                fontFamily: FONT_HEAD,
+                fontSize: "clamp(32px,5vw,52px)",
+                fontWeight: 800,
+                letterSpacing: "-0.04em",
+                color: TEXT,
+              }}
+            >
+              Skills &amp; Tools
+            </h2>
+          </motion.div>
+
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 60,
+              alignItems: "start",
+            }}
+          >
+            {/* Left: skill grid */}
+            <div>
+              {categories.map((cat: string) => {
+                const col = colors[cat] ?? A;
+                return (
+                  <motion.div
+                    key={cat}
+                    variants={fadeUp}
+                    style={{ marginBottom: 36 }}
+                  >
+                    <p
+                      style={{
+                        fontSize: 10,
+                        color: col,
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase" as const,
+                        marginBottom: 12,
+                      }}
+                    >
+                      {cat}
+                    </p>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap" as const,
+                        gap: 8,
+                      }}
+                    >
+                      {SKILLS.filter((s: Skill) => s.category === cat).map(
+                        (skill: Skill) => (
+                          <motion.button
+                            key={skill.name}
+                            onMouseEnter={() => setActive(skill)}
+                            onMouseLeave={() => setActive(null)}
+                            style={{
+                              padding: "8px 14px",
+                              borderRadius: 8,
+                              border: `1px solid ${active?.name === skill.name ? col : BORDER}`,
+                              background:
+                                active?.name === skill.name
+                                  ? `${col}12`
+                                  : "transparent",
+                              color: active?.name === skill.name ? col : TEXT2,
+                              fontSize: 13,
+                              fontWeight: 500,
+                              cursor: "pointer",
+                              transition: "all 0.2s",
+                            }}
+                            whileHover={{ scale: 1.04 }}
+                            whileTap={{ scale: 0.97 }}
+                          >
+                            {skill.name}
+                          </motion.button>
+                        ),
+                      )}
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* Right: active skill display */}
+            <motion.div
+              style={{
+                position: "sticky",
+                top: 80,
+                border: `1px solid ${BORDER}`,
+                borderRadius: 16,
+                padding: "36px 40px",
+                background: BG3,
+                minHeight: 260,
+              }}
+              layout
+            >
+              <AnimatePresence mode="wait">
+                {active ? (
+                  <motion.div
+                    key={active.name}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    <p
+                      style={{
+                        fontSize: 11,
+                        color: colors[active.category] ?? A,
+                        fontWeight: 700,
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase" as const,
+                        marginBottom: 10,
+                      }}
+                    >
+                      {active.category}
+                    </p>
+                    <h3
+                      style={{
+                        fontFamily: FONT_HEAD,
+                        fontSize: 36,
+                        fontWeight: 800,
+                        color: TEXT,
+                        letterSpacing: "-0.04em",
+                        marginBottom: 16,
+                      }}
+                    >
+                      {active.name}
+                    </h3>
+                    {/* Skill level bar */}
+                    <p style={{ fontSize: 12, color: TEXT2, marginBottom: 10 }}>
+                      Proficiency
+                    </p>
+                    <div
+                      style={{
+                        height: 4,
+                        background: BORDER,
+                        borderRadius: 99,
+                        marginBottom: 20,
+                        overflow: "hidden",
+                      }}
+                    >
+                      <motion.div
+                        style={{
+                          height: "100%",
+                          background: `linear-gradient(90deg, ${colors[active.category] ?? A}, ${A2})`,
+                          borderRadius: 99,
+                        }}
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(active.level / 5) * 100}%` }}
+                        transition={{ duration: 0.6, ease: "easeOut" as const }}
+                      />
+                    </div>
+                    <p style={{ fontSize: 13, color: TEXT3 }}>
+                      {active.level}/5 —{" "}
+                      {
+                        [
+                          "",
+                          "Beginner",
+                          "Elementary",
+                          "Intermediate",
+                          "Advanced",
+                          "Expert",
+                        ][active.level]
+                      }
+                    </p>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="empty"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    style={{
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      textAlign: "center" as const,
+                    }}
+                  >
+                    <div
+                      style={{ fontSize: 40, marginBottom: 14, opacity: 0.2 }}
+                    >
+                      ◎
+                    </div>
+                    <p style={{ color: TEXT3, fontSize: 14 }}>
+                      Hover over a skill
+                      <br />
+                      to see details
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+// ============================================================
+// PARTICLEFIELD SECTION
+// ============================================================
+
+
+function ParticleField({ color = "#00ff87", opacity = 0.6 }: { color?: string; opacity?: number }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
+
+    const particles = Array.from({ length: 80 }, () => ({
+      x:    Math.random() * canvas.width,
+      y:    Math.random() * canvas.height,
+      vx:   (Math.random() - 0.5) * 0.4,
+      vy:   (Math.random() - 0.5) * 0.4,
+      size: Math.random() * 2 + 1,
+    }));
+
+    let animId: number;
+
+    function draw() {
+      ctx!.clearRect(0, 0, canvas!.width, canvas!.height);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0) p.x = canvas!.width;
+        if (p.x > canvas!.width) p.x = 0;
+        if (p.y < 0) p.y = canvas!.height;
+        if (p.y > canvas!.height) p.y = 0;
+
+        ctx!.beginPath();
+        ctx!.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx!.fillStyle = color;
+        ctx!.globalAlpha = opacity * 0.7;
+        ctx!.fill();
+      }
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx   = particles[i].x - particles[j].x;
+          const dy   = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx!.beginPath();
+            ctx!.moveTo(particles[i].x, particles[i].y);
+            ctx!.lineTo(particles[j].x, particles[j].y);
+            ctx!.strokeStyle = color;
+            ctx!.globalAlpha = (1 - dist / 120) * opacity * 0.25;
+            ctx!.lineWidth   = 0.8;
+            ctx!.stroke();
+          }
+        }
+      }
+
+      ctx!.globalAlpha = 1;
+      animId = requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener("resize", resize);
+    };
+  }, [color, opacity]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position:      "absolute",
+        inset:         0,
+        width:         "100%",
+        height:        "100%",
+        pointerEvents: "none",
+        zIndex:        0,
+      }}
+    />
+  );
+}
+
+// ============================================================
+// TIMELINE SECTION
+// ============================================================
+function TimelineSection() {
+  const milestones = [
+    ...QUALIFICATIONS.map((q: Qualification) => ({
+      year:  q.year.split("–")[0].trim(),
+      title: q.degree,
+      sub:   q.school,
+      desc:  q.description,
+      type:  "Education",
+      color: A,
+    })),
+    ...PROJECTS.map((p: Project) => ({
+      year:  "2024",
+      title: p.title,
+      sub:   p.tech.join(" · "),
+      desc:  p.description,
+      type:  "Project",
+      color: A2,
+    })),
+  ];
+
+  return (
+    <section id="timeline" style={{ padding: "120px 52px", position: "relative", overflow: "hidden" }}>
+
+      {/* Moving particle background */}
+      <ParticleField color="#00ff87" opacity={0.5} />
+      
+       {/* Your background video */}
+<video
+  autoPlay muted loop playsInline
+  style={{
+    position:   "absolute",
+    inset:      0,
+    width:      "100%",
+    height:     "100%",
+    objectFit:  "cover",
+    zIndex:     0,
+    opacity:    0.75,   // ← adjust for how visible you want it
+  }}>
+  <source src="/images/timeline-bg.mp4" type="video/mp4" />
+</video>
+
+      {/* Dark overlay so text stays readable */}
+      <div style={{ position: "absolute", inset: 0, background: "rgba(5,5,5,0.8)", zIndex: 1, pointerEvents: "none" }} />
+
+      {/* Content sits on top */}
+      <div style={{ maxWidth: 800, margin: "0 auto", position: "relative", zIndex: 2 }}>
+        <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+
+          <motion.div variants={fadeUp} style={{ marginBottom: 64 }}>
+            <p style={{ fontSize: 11, color: A, fontWeight: 700, letterSpacing: "0.12em", marginBottom: 8, textTransform: "uppercase" as const }}>
+              The journey
+            </p>
+            <h2 style={{ fontFamily: FONT_HEAD, fontSize: "clamp(32px,5vw,52px)", fontWeight: 800, letterSpacing: "-0.04em", color: "#f0f0f0" }}>
+              Timeline
+            </h2>
+          </motion.div>
+
+          <div style={{ position: "relative" }}>
+            <div style={{ position: "absolute", left: 20, top: 0, bottom: 0, width: 1, background: "rgba(0,255,135,0.2)" }} />
+
+            {milestones.map((m, i) => (
+              <motion.div key={i} variants={fadeUp}
+                style={{ display: "flex", gap: 32, marginBottom: 48, paddingLeft: 56, position: "relative" }}>
+
+                <div style={{
+                  position: "absolute", left: 14, top: 6,
+                  width: 13, height: 13, borderRadius: "50%",
+                  background: m.color,
+                  boxShadow: `0 0 16px ${m.color}, 0 0 32px ${m.color}40`,
+                  border: `2px solid #050505`,
+                }} />
+
+                <div style={{
+                  flex: 1,
+                  background: "rgba(10,10,10,0.85)",
+                  border: `1px solid ${m.color}25`,
+                  borderRadius: 12,
+                  padding: "20px 24px",
+                  backdropFilter: "blur(8px)",
+                }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 6 }}>
+                    <h3 style={{ fontFamily: FONT_HEAD, fontSize: 16, fontWeight: 700, color: "#f0f0f0", letterSpacing: "-0.02em" }}>
+                      {m.title}
+                    </h3>
+                    <div style={{ display: "flex", gap: 8, alignItems: "center", flexShrink: 0, marginLeft: 12 }}>
+                      <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 4, background: `${m.color}15`, color: m.color, fontWeight: 700 }}>
+                        {m.type}
+                      </span>
+                      <span style={{ fontSize: 12, color: "#444", fontWeight: 500 }}>{m.year}</span>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 12, color: m.color, fontWeight: 500, marginBottom: 8 }}>{m.sub}</p>
+                  <p style={{ fontSize: 13, color: "#888", lineHeight: 1.6 }}>{m.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+// ============================================================
+// CONTACT FOOTER — cinematic full-screen CTA
+// ============================================================
+function ContactFooter() {
+  const [emailHov, setEmailHov] = useState(false);
+
+  return (
+    <footer
+      id="contact"
+      style={{
+        background: BG2,
+        borderTop: `1px solid ${BORDER}`,
+        padding: "120px 52px 60px",
+      }}
+    >
+      <div style={{ maxWidth: 900, margin: "0 auto" }}>
+        <motion.div
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {/* Giant CTA text */}
+          <motion.h2
+            variants={fadeUp}
+            style={{
+              fontFamily: FONT_HEAD,
+              fontSize: "clamp(40px,8vw,96px)",
+              fontWeight: 800,
+              letterSpacing: "-0.05em",
+              lineHeight: 0.95,
+              color: TEXT,
+              marginBottom: 48,
+            }}
+          >
+            Let's <span className="g-accent">collaborate</span>.
+          </motion.h2>
+
+          {/* Email link */}
+          <motion.a
+            variants={fadeUp}
+            href={`mailto:${PROFILE.email}`}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 14,
+              fontSize: "clamp(16px,3vw,24px)",
+              color: emailHov ? A : TEXT2,
+              fontWeight: 500,
+              marginBottom: 72,
+              transition: "color 0.2s",
+            }}
+            onMouseEnter={() => setEmailHov(true)}
+            onMouseLeave={() => setEmailHov(false)}
+          >
+            <span>{PROFILE.email}</span>
+            <motion.span
+              animate={{ x: emailHov ? 6 : 0 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              →
+            </motion.span>
+          </motion.a>
+
+          {/* Divider */}
+          <motion.div
+            variants={fadeIn}
+            style={{ height: 1, background: BORDER, marginBottom: 40 }}
+          />
+
+          {/* Bottom row */}
+          <motion.div
+            variants={fadeUp}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap" as const,
+              gap: 20,
+            }}
+          >
+            <p
+              style={{
+                fontFamily: FONT_HEAD,
+                fontSize: 18,
+                fontWeight: 800,
+                letterSpacing: "-0.03em",
+              }}
+            >
+              <span className="g-name">{PROFILE.name.split(" ")[0]}</span>
+              <span style={{ color: A }}>.</span>
+            </p>
+
+            {/* Social links */}
+            <div style={{ display: "flex", gap: 20 }}>
+              {[
+                { label: "GitHub", href: PROFILE.github },
+                { label: "LinkedIn", href: PROFILE.linkedin },
+                { label: "Email", href: `mailto:${PROFILE.email}` },
+              ].map((l) => (
+                <a
+                  key={l.label}
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    fontSize: 13,
+                    color: TEXT3,
+                    fontWeight: 500,
+                    transition: "color 0.2s",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = A)}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = TEXT3)}
+                >
+                  {l.label}
+                </a>
+              ))}
+            </div>
+
+            <p style={{ fontSize: 12, color: TEXT3 }}>
+              © {new Date().getFullYear()} — Cloud Computing Portfolio
+            </p>
+          </motion.div>
+        </motion.div>
+      </div>
+    </footer>
+  );
+}
+
+// ============================================================
+// ROOT — assembles all sections
+// ============================================================
+export default function Portfolio() {
+  return (
+    <>
+      <GlobalStyles />
+      <CursorGlow />
+      <Navbar />
+      <main>
+        <HeroSection />
+        <ManifestoSection />
+        <ProjectsSection />
+        <SkillsMatrix />
+        <TimelineSection />
+      </main>
+      <ContactFooter />
+    </>
+  );
+}

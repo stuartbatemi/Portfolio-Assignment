@@ -1,9 +1,7 @@
 
 
 
-// ============================================================
-// PASTE THIS INTO: src/data/portfolio.ts
-// (the file you just created — it should be empty right now)
+
 // ============================================================
 
 // Interfaces tell TypeScript the shape of each data type.
@@ -13,7 +11,7 @@ export interface Qualification { degree: string; school: string; year: string; d
 export interface Project       { title: string; description: string; tech: string[]; image: string | null; link: string; featured: boolean; }
 export interface NavItem       { id: string; label: string; emoji: string; }
 
-// ✏️  EDIT EVERYTHING BELOW with your real info
+
 // ─────────────────────────────────────────────
 // HOW TO ADD YOUR PHOTO:
 //   1. Copy your photo to the "public" folder → public/me.jpg
@@ -22,14 +20,14 @@ export interface NavItem       { id: string; label: string; emoji: string; }
 // ─────────────────────────────────────────────
 export const PROFILE = {
   name:     "BATEMI STUART HEDDI",
-  title:    "BUSINESS ANALYST",
-  subtitle: "Cloud Computing Student",
+  title:    "EASTC/BDTS/24/01102",
+  subtitle: "DATA SCIENCE STUDENT",
   bio:      "I build things for the web. Currently studying Cloud Computing and learning to deploy full-stack applications using Vercel and Render.",
   email:    "heddibatemi@yahoo.com",
   github:   "https://github.com/stuartbatemi",
   linkedin: "https://www.linkedin.com/in/stuartbatemi55",
   location: "Dar es Salaam, Tanzania",
-  avatar:   null as string | null,   // ← change to "/me.jpg" when ready
+  avatar: "/images/hero.jpg",   // ← change to "/me.jpg" when ready
 };
 
 export const SKILLS: Skill[] = [
@@ -62,10 +60,10 @@ export const QUALIFICATIONS: Qualification[] = [
 
 export const PROJECTS: Project[] = [
   {
-    title:       "Personal Portfolio Website",
-    description: "Dynamic portfolio built with React and TypeScript. Features Framer Motion animations. Deployed on Vercel.",
-    tech:        ["React", "TypeScript", "Framer Motion", "Vercel"],
-    image:       null,    // ← change to "/project1.png" when ready
+    title:       "Credit Card Fraud Detection",
+    description: "The project addresses the challenge of identifying fraudulent credit card transactions in a highly unbalanced dataset (0.17% fraud). The built machine learning pipeline prioritizes catching thieves over simply achieving high accuracy.",
+    tech:        ["python", "Jupyter Notebook"],
+    image:  "/images/project x.jpg",   // ← change to "/project1.png" when ready
     link:        "#",     // ← update with your Vercel URL after deploy
     featured:    true,
   },
@@ -73,7 +71,7 @@ export const PROJECTS: Project[] = [
     title:       "Portfolio REST API",
     description: "Node.js/Express backend serving portfolio data as JSON. Deployed on Render.",
     tech:        ["Node.js", "Express", "REST API", "Render"],
-    image:       null,    // ← change to "/project2.png" when ready
+    image: "/images/project 2.jpg",    // ← change to "/project2.png" when ready
     link:        "#",     // ← update with your Render URL after deploy
     featured:    false,
   },
