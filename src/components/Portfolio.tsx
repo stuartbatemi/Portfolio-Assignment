@@ -544,7 +544,7 @@ function HeroSection() {
       <p style={{
         fontSize:      16,          // ← was 13, now bigger
         fontWeight:    800,
-        color:         "#f0f0f0",   // bright white
+        color:         "#312929",   // bright white
         fontFamily:    FONT_HEAD,
         letterSpacing: "-0.02em",
         marginBottom:  3,
