@@ -462,92 +462,106 @@ function HeroSection() {
             Shows your photo in a circle like a profile pic
         ══════════════════════════════════════════════ */}
         {isMobile && (
-          <motion.div
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.5, ease: "backOut" as const }}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 14,
-              marginBottom: 8,
-            }}
-          >
-            {/* Circle photo */}
-            <div
-              style={{
-                width: 64,
-                height: 64,
-                borderRadius: "50%",
-                overflow: "hidden",
-                border: "2px solid rgba(0,255,135,0.5)",
-                flexShrink: 0,
-                position: "relative",
-                background: "#0a0a0a",
-                boxShadow: "0 0 20px rgba(0,255,135,0.2)",
-              }}
-            >
-              {!photoError && (
-                <img
-                  src={PROFILE.avatar ?? "/images/hero.jpg"}
-                  alt={PROFILE.name}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover" as const,
-                    opacity: photoLoaded ? 1 : 0,
-                    transition: "opacity 0.4s",
-                  }}
-                  onLoad={() => setPhotoLoaded(true)}
-                  onError={() => setPhotoError(true)}
-                />
-              )}
-              {/* Initials fallback */}
-              {(photoError || !photoLoaded) && (
-                <div
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "linear-gradient(135deg,#00ff87,#00e5ff)",
-                    fontSize: 70,
-                    fontWeight: 800,
-                    color: "#050505",
-                    fontFamily: FONT_HEAD,
-                  }}
-                >
-                  {initials}
-                </div>
-              )}
-            </div>
+        <motion.div
+    // Rolls in from bottom — bounces into place
+       initial={{ y: 120, opacity: 0, scale: 0.3, rotate: -180 }}
+       animate={{ y: 0,   opacity: 1, scale: 1,   rotate: 0    }}
+       transition={{
+      type:      "spring",
+      stiffness: 80,       // lower = more bouncy
+      damping:   10,       // lower = more overshoots
+      delay:     0.2,
+    }}
+    style={{
+      display:      "flex",
+      alignItems:   "center",
+      gap:          16,
+      marginBottom: 4,
+    }}
+  >
+    {/* Circle photo — bigger now */}
+    <motion.div
+      style={{
+        width:        90,        // ← was 64, now 90
+        height:       90,        // ← was 64, now 90
+        borderRadius: "50%",
+        overflow:     "hidden",
+        border:       "2.5px solid rgba(0,255,135,0.6)",
+        flexShrink:   0,
+        position:     "relative",
+        background:   "#0a0a0a",
+        boxShadow:    "0 0 30px rgba(0,255,135,0.3), 0 0 60px rgba(0,255,135,0.1)",
+      }}
+      // Subtle continuous pulse on the glow
+      animate={{ boxShadow: [
+        "0 0 30px rgba(0,255,135,0.3), 0 0 60px rgba(0,255,135,0.1)",
+        "0 0 40px rgba(0,255,135,0.5), 0 0 80px rgba(0,255,135,0.2)",
+        "0 0 30px rgba(0,255,135,0.3), 0 0 60px rgba(0,255,135,0.1)",
+      ]}}
+      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+    >
+      {!photoError && (
+        <img
+          src={PROFILE.avatar ?? "/images/hero.jpg"}
+          alt={PROFILE.name}
+          style={{
+            width:      "100%",
+            height:     "100%",
+            objectFit:  "cover" as const,
+            opacity:    photoLoaded ? 1 : 0,
+            transition: "opacity 0.4s",
+          }}
+          onLoad={() => setPhotoLoaded(true)}
+          onError={() => setPhotoError(true)}
+        />
+      )}
+      {/* Initials fallback */}
+      {(photoError || !photoLoaded) && (
+        <div style={{
+          position:       "absolute",
+          inset:          0,
+          display:        "flex",
+          alignItems:     "center",
+          justifyContent: "center",
+          background:     "linear-gradient(135deg,#00ff87,#00e5ff)",
+          fontSize:       28,         // ← bigger initials
+          fontWeight:     800,
+          color:          "#050505",
+          fontFamily:     FONT_HEAD,
+        }}>
+          {initials}
+        </div>
+      )}
+    </motion.div>
 
-            {/* Name next to circle on mobile */}
-            <div>
-              <p
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  color: "#033b1a",
-                  fontFamily: FONT_HEAD,
-                }}
-              >
-                {PROFILE.title}
-              </p>
-              <p
-                style={{
-                  fontSize: 11,
-                  color: A,
-                  fontWeight: 600,
-                  letterSpacing: "0.05em",
-                }}
-              >
-                {PROFILE.subtitle}
-              </p>
-            </div>
-          </motion.div>
-        )}
+    {/* Text next to circle */}
+    <motion.div
+      // Slides in from left slightly after the circle
+      initial={{ x: -20, opacity: 0 }}
+      animate={{ x: 0,   opacity: 1 }}
+      transition={{ delay: 0.5, duration: 0.4 }}
+    >
+      <p style={{
+        fontSize:      16,          // ← was 13, now bigger
+        fontWeight:    800,
+        color:         "#f0f0f0",   // bright white
+        fontFamily:    FONT_HEAD,
+        letterSpacing: "-0.02em",
+        marginBottom:  3,
+      }}>
+        {PROFILE.name}             {/* shows full name */}
+      </p>
+      <p style={{
+        fontSize:      12,          // ← was 11, slightly bigger
+        color:         A,
+        fontWeight:    600,
+        letterSpacing: "0.06em",
+      }}>
+        {PROFILE.subtitle}
+      </p>
+    </motion.div>
+  </motion.div>
+)}
 
         {/* LEFT — text content */}
         <motion.div
