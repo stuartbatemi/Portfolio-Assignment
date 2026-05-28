@@ -549,7 +549,7 @@ function HeroSection() {
         letterSpacing: "-0.02em",
         marginBottom:  3,
       }}>
-        {PROFILE.name}             {/* shows full name */}
+        {PROFILE.title}             {/* shows full name */}
       </p>
       <p style={{
         fontSize:      12,          // ← was 11, slightly bigger
