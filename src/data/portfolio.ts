@@ -22,12 +22,12 @@ export const PROFILE = {
   name:     "BATEMI STUART HEDDI",
   title:    "EASTC/BDTS/24/01102",
   subtitle: "DATA SCIENCE STUDENT",
-  bio:      "I build things for the web. Currently studying Cloud Computing and learning to deploy full-stack applications using Vercel and Render.",
+  bio:      " A data science student and experienced system analyst passionate about leveraging advanced analytics to solve real-world problems. I believe the future of global progress lies in creating intelligent, sustainable systems that drive efficiency, financial inclusion, and smarter infrastructure for everyone.",
   email:    "heddibatemi@yahoo.com",
   github:   "https://github.com/stuartbatemi",
   linkedin: "https://www.linkedin.com/in/stuartbatemi55",
   location: "Dar es Salaam, Tanzania",
-  avatar: "/images/hero.jpg",   // ← change to "/me.jpg" when ready
+  avatar: "/images/mema.jpeg",   // ← change to "/me.jpg" when ready
 };
 
 export const SKILLS: Skill[] = [
