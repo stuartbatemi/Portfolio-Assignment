@@ -35,7 +35,6 @@ import { motion, AnimatePresence, type Variants } from "framer-motion";
 
 import { PROFILE, SKILLS, QUALIFICATIONS, PROJECTS } from "../data/portfolio";
 import type { Skill, Qualification, Project } from "../data/portfolio";
-import { fetchAllPortfolioData } from "../data/api";
 
 // ============================================================
 // DESIGN SYSTEM — one place to change everything
@@ -178,7 +177,6 @@ const fadeIn: Variants = {
 // NAVBAR — transparent on hero, solid on scroll
 // ============================================================
 function Navbar() {
-  const { profile: PROFILE } = usePortfolio();
   const [solid, setSolid] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const ww = useWindowWidth();
@@ -230,8 +228,8 @@ function Navbar() {
             letterSpacing: "-0.04em",
           }}
         >
-         <span className="g-name">{PROFILE.name.split(" ")[0]}</span> {/* Use PROFILE here */}
-  <span style={{ color: A, marginLeft: 2 }}>.</span>
+          <span className="g-name">{PROFILE.name.split(" ")[0]}</span>
+          <span style={{ color: A, marginLeft: 2 }}>.</span>
         </a>
 
         {/* Desktop links */}
@@ -370,7 +368,6 @@ function Navbar() {
 // Add this line with the other useState lines at the top of HeroSection:
 
 function HeroSection() {
-  const { profile: PROFILE, skills: SKILLS, projects: PROJECTS, qualifications: QUALIFICATIONS } = usePortfolio();
   const [photoHovered, setPhotoHovered] = useState(false);
   const [photoLoaded, setPhotoLoaded] = useState(false);
   const [photoError, setPhotoError] = useState(false);
@@ -1179,7 +1176,6 @@ function ManifestoSection() {
 // PROJECTS SECTION — asymmetric grid
 // ============================================================
 function ProjectsSection() {
-  const { projects: PROJECTS, profile: PROFILE } = usePortfolio();
   const [filter, setFilter] = useState("All");
   const filters = [
     "All",
@@ -1287,7 +1283,6 @@ function ProjectCard({
   project: Project;
   featured: boolean;
 }) {
-  const { profile: PROFILE } = usePortfolio();
   const [hov, setHov] = useState(false);
   const ww = useWindowWidth();
   const isMobile = ww < 768;
@@ -1515,7 +1510,6 @@ function ProjectCard({
 // SKILLS MATRIX — interactive hover grid
 // ============================================================
 function SkillsMatrix() {
-  const { skills: SKILLS } = usePortfolio();
   const [active, setActive] = useState<Skill | null>(null);
   const categories = Array.from(new Set(SKILLS.map((s: Skill) => s.category)));
   const colors: Record<string, string> = {
@@ -1857,7 +1851,6 @@ function ParticleField({
 // TIMELINE SECTION
 // ============================================================
 function TimelineSection() {
-  const { qualifications: QUALIFICATIONS, projects: PROJECTS } = usePortfolio();
   const milestones = [
     ...QUALIFICATIONS.map((q: Qualification) => ({
       year: q.year.split("–")[0].trim(),
@@ -2081,7 +2074,6 @@ function TimelineSection() {
 // CONTACT FOOTER — cinematic full-screen CTA
 // ============================================================
 function ContactFooter() {
-  const { profile: PROFILE } = usePortfolio();
   const [emailHov, setEmailHov] = useState(false);
 
   return (
@@ -2208,58 +2200,11 @@ function ContactFooter() {
 }
 
 // ============================================================
-// CONTEXT — shares live API data with all child sections
-// ============================================================
-import { createContext, useContext } from "react";
-
-interface PortfolioData {
-  profile:        typeof PROFILE;
-  skills:         typeof SKILLS;
-  projects:       typeof PROJECTS;
-  qualifications: typeof QUALIFICATIONS;
-  apiStatus:      "loading" | "live" | "fallback";
-}
-
-const PortfolioContext = createContext<PortfolioData>({
-  profile:        PROFILE,
-  skills:         SKILLS,
-  projects:       PROJECTS,
-  qualifications: QUALIFICATIONS,
-  apiStatus:      "fallback",
-});
-// eslint-disable-next-line react-refresh/only-export-components
-export const usePortfolio = () => useContext(PortfolioContext);
-
-// ============================================================
 // ROOT — assembles all sections
 // ============================================================
 export default function Portfolio() {
-  // Start with static data immediately (no blank screen)
-  // Then silently swap in live API data when it loads
-  const [profile, setProfile]             = useState(PROFILE);
-  const [skills, setSkills]               = useState(SKILLS);
-  const [projects, setProjects]           = useState(PROJECTS);
-  const [qualifications, setQualifications] = useState(QUALIFICATIONS);
-  const [apiStatus, setApiStatus]         = useState<"loading"|"live"|"fallback">("loading");
-
-  useEffect(() => {
-    fetchAllPortfolioData()
-      .then(({ profile, skills, projects, qualifications }) => {
-        setProfile(prev => ({ ...prev, ...profile, avatar: prev.avatar })); // keep local avatar
-        setSkills(skills);
-        setProjects(projects);
-        setQualifications(qualifications);
-        setApiStatus("live");
-        console.log("✅ Live data loaded from Render API");
-      })
-      .catch(() => {
-        setApiStatus("fallback");
-        console.warn("⚠️ Using static fallback data");
-      });
-  }, []);
-
   return (
-    <PortfolioContext.Provider value={{ profile, skills, projects, qualifications, apiStatus }}>
+    <>
       <GlobalStyles />
       <CursorGlow />
       <Navbar />
@@ -2271,6 +2216,6 @@ export default function Portfolio() {
         <TimelineSection />
       </main>
       <ContactFooter />
-    </PortfolioContext.Provider>
+    </>
   );
 }
